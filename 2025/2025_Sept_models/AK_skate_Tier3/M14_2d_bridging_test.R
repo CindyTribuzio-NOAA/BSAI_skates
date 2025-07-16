@@ -71,10 +71,23 @@ ggplot(selex_results, aes(x = as.numeric(Lbin), y = Selectivity, color = model, 
   facet_grid(Fleet~.)+
   theme_bw()
 
+# logistic selectivity for comparison to RTMB----
+# same as above, changing selectivity directly in control fil
+log_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run2_M14_2d_logistic_lselex')
+
+r4ss::run(dir = log_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+mlog <- SS_output(log_mod_path, printstats = FALSE, verbose = FALSE)
+
+SSplotSelex(mlog)
+
 #overall comparison of model runs----
 datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
 setwd(datapath)
-bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch","run1_M14_2d_ss3version", "run3_M14_2d_widebounds_lselex"))
+bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
+                                     "run1_M14_2d_ss3version", 
+                                     "run2_M14_2d_logistic_lselex", 
+                                     "run3_M14_2d_widebounds_lselex"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 
 model_comp <- SSsummarize(bridge_out)
@@ -82,7 +95,7 @@ model_comp <- SSsummarize(bridge_out)
 SSplotComparisons(model_comp,
                         print = TRUE,
                         plotdir = here::here(datapath),
-                        legendlabels = c('base', 'updated SS3', 'bounds'))
+                        legendlabels = c('base', 'updated SS3', 'logistic', 'bounds'))
 
 
 

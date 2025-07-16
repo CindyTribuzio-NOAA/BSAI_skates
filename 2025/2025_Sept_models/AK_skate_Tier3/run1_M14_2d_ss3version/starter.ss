@@ -5,7 +5,7 @@
 #_user_info_available_at:https://vlab.ncep.noaa.gov/group/stock-synthesis
 #C starter for model 14.2 ss_trans bridge July 2023
 data_aksk14_2_2023.ss
-control.ss_new
+control.ss
 0 # 0=use init values in control file; 1=use ss.par
 1 # run display detail (0,1,2)
 1 # detailed output (0=minimal for data-limited, 1=high (w/ wtatage.ss_new), 2=brief, 3=custom) 

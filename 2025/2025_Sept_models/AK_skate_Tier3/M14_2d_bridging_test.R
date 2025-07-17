@@ -81,6 +81,85 @@ mlog <- SS_output(log_mod_path, printstats = FALSE, verbose = FALSE)
 
 SSplotSelex(mlog)
 
+mlog_selexpars <- mlog$SelSizeAdj %>% 
+  filter(Yr == 2023) %>% 
+  mutate(model = 'logistic')
+
+# fixing growth outside of the model----
+grow_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_M14_2d_fixedgrowth')
+
+waa <- r4ss::SS_readwtatage(file = paste0(grow_mod_path, '/wtatage.ss_new'))
+out <- r4ss::SS_output(grow_mod_path, verbose = TRUE)
+
+# Extract Data ------------------------------------------------------------
+
+# define dimensions
+n_regions <- 1 # number of regions
+n_sexes <- 1 # number of sexes
+n_fish_fleets <- 2 # number of fishery fleets
+n_srv_fleets <- 1 # number of survey fleets
+years <- 1950:2023 # years
+n_yrs <- length(years) # number of years
+ages <- 0:25 # vector of ages
+n_ages <- length(ages) # number of ages
+lens <- out$lbins # vector of lengths
+n_lens <- length(lens) # number of length bins
+spwn_month <- 1 # spawning month (start of year)
+
+### Demographics ------------------------------------------------------------
+
+# weight at age
+waa <- out$ageselex %>% filter(Label == '1952_1_bodywt')
+waa_arr <- array(0, dim = c(n_regions, n_yrs, n_ages, n_sexes))
+waa_arr[] <- rep(out$endgrowth$Wt_Mid, each = n_yrs)
+
+# get length at age and sd to construct ALK
+laa <- out$endgrowth$Len_Mid # length at age
+sd <- out$endgrowth$SD_Mid # sd of length at age
+
+# construct alk
+get_al_trans_matrix = function(age_bins, len_bins, mean_length, sd) {
+  
+  # Construct age length matrix
+  age_length = matrix(0.0, nrow = length(age_bins), ncol = length(len_bins))
+  
+  for(age_ndx in 1:length(age_bins)) {
+    for(len_ndx in 1:length(len_bins)) {
+      if (len_ndx == 1) {
+        age_length[age_ndx, len_ndx] = pnorm(len_bins[2], mean_length[age_ndx], sd[age_ndx])
+      } else if (len_ndx == length(len_bins)) {
+        age_length[age_ndx, len_ndx] = 1 - pnorm(len_bins[length(len_bins)], mean_length[age_ndx], sd[age_ndx])
+      } else {
+        age_length[age_ndx, len_ndx] = pnorm(len_bins[len_ndx+1], mean_length[age_ndx], sd[age_ndx]) -  
+          pnorm(len_bins[len_ndx], mean_length[age_ndx], sd[age_ndx])
+      }
+    }
+  }
+  return(age_length)
+} # end function
+
+alk <- get_al_trans_matrix(age_bins = ages,
+                           len_bins  = lens,
+                           mean_length =  as.numeric(unlist(laa)),
+                           sd = as.numeric(unlist(sd))
+)
+
+# normalize ALK in case it doesnt sum to 1
+alk <- t(apply(alk, 1, function(x) x / sum(x)))
+
+# populate size age transition matrix
+sizeage <- array(0, dim = c(n_regions, n_yrs, n_lens, n_ages, n_sexes))
+for(i in 1:n_yrs) sizeage[1,i,,,1] <- t(alk)
+
+
+
+
+
+
+
+
+
+
 #overall comparison of model runs----
 datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
 setwd(datapath)

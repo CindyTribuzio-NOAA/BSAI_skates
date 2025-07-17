@@ -231,13 +231,13 @@
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 # 1   LGL LenSelex
              0         	 500            75           111          0.05             0          2          0          0          0          0        0.5          0          0  #  Inflection_LGL(1)
-           0.1            10             1             5          0.05             0          3          0          0          0          0        0.5          0          0  #  Slope_LGL(1)
+           0.1           100             1             5          0.05             0          3          0          0          0          0        0.5          0          0  #  Slope_LGL(1)
 # 2   TWL LenSelex
              0         	 500            75           111          0.05             0          2          0          0          0          0        0.5          0          0  #  Inflection_TWL(2)
-           0.1            10             1             5          0.05             0          3          0          0          0          0        0.5          0          0  #  Slope_TWL(2)
+           0.1           100             1             5          0.05             0          3          0          0          0          0        0.5          0          0  #  Slope_TWL(2)
 # 3   SURV LenSelex
              0         	 500            75           111          0.05             0          2          0          0          0          0        0.5          0          0  #  Inflection_SURV(3)
-           0.1            10             1             5          0.05             0          3          0          0          0          0        0.5          0          0  #  Slope_SURV(1)
+           0.1           100             1             5          0.05             0          3          0          0          0          0        0.5          0          0  #  Slope_SURV(1)
 # 1   LGL AgeSelex
 # 2   TWL AgeSelex
 # 3   SURV AgeSelex

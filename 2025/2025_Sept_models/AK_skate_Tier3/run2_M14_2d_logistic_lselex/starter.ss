@@ -5,7 +5,7 @@
 #_User_info_available_at:_https://nmfs-ost.github.io/ss3-website/
 #_Source_code_at:_https://github.com/nmfs-ost/ss3-source-code
 
-#C starter for model 14.2 ss_trans bridge July 2023
+#C starter for model 14.2d exploring logistic selectivity
 data_aksk14_2_2023.ss
 control.ss
 0 # 0=use init values in control file; 1=use ss.par

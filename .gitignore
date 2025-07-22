@@ -1,4 +1,34 @@
+# R projects
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+.Rproj
+
+# usernames and passwords for db connections
+database.csv
+
+# confidential fishery dependent data
+*confidential*
+
+# Don't track data
+*.xlsx
+*.xlsm
+*.docx
+*.pptx
+*.Rdata
+
+# Don't track binary or fig files
+*.docx
+*.pptx
+*.pdf
+
+
+# ignore shape files
+shapefiles
+
+# ignore zip files
+*.zip
+
+# Windows thumbnail cache files
+Thumbs.db

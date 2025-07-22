@@ -39,6 +39,13 @@ mold_selex <- mold$sizeselex %>%
          Factor == 'Lsel') %>% 
   mutate(model = 'base')
 
+mnew_out <- SS_output(dir = vers_mode_path, verbose = TRUE)
+
+mnew_SS <- SSsummarize(mnew_out)
+
+# plots the results
+SS_plots(mnew_out)
+
 # change widen selectivity bounds----
 #changing bounds directly in the control file for now
 bnd_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run3_M14_2d_widebounds_lselex')
@@ -84,6 +91,40 @@ SSplotSelex(mlog)
 mlog_selexpars <- mlog$SelSizeAdj %>% 
   filter(Yr == 2023) %>% 
   mutate(model = 'logistic')
+
+# changing growth init parameters----
+gparam_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_M14_2d_Gparams')
+#changing INIT parameters directly in the control file for now
+
+r4ss::run(dir = gparam_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+gparam_out <- SS_output(dir = gparam_mod_path, verbose = TRUE)
+
+gparam_SS <- SSsummarize(gparam_out)
+
+# plots the results
+SS_plots(gparam_out)
+
+# pull out parameters for summary table ----
+llhoods <- gparam_out$likelihoods
+SSB <- gparam_out$SpawnBio %>% 
+  bind_cols(gparam_out$SpawnBioLower$replist1, gparam_out$SpawnBioUpper$replist1, gparam_out$SpawnBioSD$replist1) %>% 
+  select(year = Yr, SSB = replist1, SSBLL = ...4, SSBUL = ...5, SSBSD = ...6) %>% 
+  mutate(CV = SSBSD/SSB)
+
+
+recruit <- M14_2_SS$recruits %>% 
+  bind_cols(M14_2_SS$recruitsLower$replist1, M14_2_SS$recruitsUpper$replist1, M14_2_SS$recruitsSD$replist1) %>% 
+  select(year = Yr, rec = replist1, recLL = ...4, recUL = ...5, recSD = ...6) %>% 
+  mutate(CV = recSD/rec)
+write_csv(recruit, paste0(getwd(), "/Output/", AYR, "/Tier3/M14_2recruit_summary.csv"))
+
+pars <- M14_2_SS$pars %>% 
+  bind_cols(M14_2_SS$parsSD$replist1) %>% 
+  select(Parameter = Label, value = replist1, parSD = ...5)
+
+
+
 
 # fixing growth outside of the model----
 grow_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_M14_2d_fixedgrowth')
@@ -166,7 +207,8 @@ setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
                                      "run1_M14_2d_ss3version", 
                                      "run2_M14_2d_logistic_lselex", 
-                                     "run3_M14_2d_widebounds_lselex"))
+                                     "run3_M14_2d_widebounds_lselex",
+                                     "run4_M14_2d_Gparams"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 
 model_comp <- SSsummarize(bridge_out)
@@ -174,7 +216,7 @@ model_comp <- SSsummarize(bridge_out)
 SSplotComparisons(model_comp,
                         print = TRUE,
                         plotdir = here::here(datapath),
-                        legendlabels = c('base', 'updated SS3', 'logistic', 'bounds'))
+                        legendlabels = c('base', 'updated SS3', 'logistic', 'bounds', 'jitter growth'))
 
 
 

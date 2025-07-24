@@ -1,0 +1,11 @@
+###
+console output
+2025-07-23 12:04:53.973508
+###
+ 
+ reading from starter.ss
+ reading from data file
+Warning 3 Fatal Error! Error: There are > 1 negative sd values for age 0 in age error definitions.
+       but SS3 can only create 1 age error definition from parameters, 
+Also see warning.sso
+Exiting SS3! 

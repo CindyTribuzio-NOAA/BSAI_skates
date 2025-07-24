@@ -1,0 +1,10 @@
+###
+console output
+2025-07-23 12:10:24.323559
+###
+ 
+ reading from starter.ss
+ reading from data file
+Warning 3 Fatal Error! reading past end of file for env data; exit 
+Also see warning.sso
+Exiting SS3! 

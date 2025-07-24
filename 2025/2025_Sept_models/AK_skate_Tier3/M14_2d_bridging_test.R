@@ -82,21 +82,34 @@ mrun4_out <- SS_output(dir = run4_mode_path, verbose = TRUE)
 # plots the results
 SS_plots(mrun4_out)
 
+# run5 base model with wider bounds on growth----
+run5_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run5_growth_bnds')
+run(dir = run5_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun5 <- SS_output(run5_mode_path, printstats = FALSE, verbose = FALSE)
+mrun5_out <- SS_output(dir = run5_mode_path, verbose = TRUE)
+
+#mArun1_SS <- SSsummarize(mArun1_out)
+
+# plots the results
+SS_plots(mrun5_out)
+
+
 #overall comparison of model runs----
 datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
 setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
                                      "agerun1_fixed_params_Amx20", 
                                      "agerun2_fixed_params_Amx26",
-                                     "run4_Arun2_slxbnds"))
+                                     "run4_Arun2_slxbnds",
+                                     "run5_growth_bnds"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
-
 model_comp <- SSsummarize(bridge_out)
 
 SSplotComparisons(model_comp,
                         print = TRUE,
                         plotdir = here::here(datapath),
-                        legendlabels = c('base', 'Amax20', 'Amax26', 'slxbnds'))
+                        legendlabels = c('base', 'Amax20', 'Amax26', 'slxbnds', 'grbnds'))
 
 
 

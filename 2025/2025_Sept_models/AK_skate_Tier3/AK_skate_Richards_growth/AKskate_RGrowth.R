@@ -2,14 +2,13 @@
 # Contact: cindy.tribuzio@noaa.gov
 # Last Updated: July 2025
 
-# TODO: #need to check size at age vectors too
-
 # Setup ----
 libs <- c("tidyverse", "RODBC", 'stats', 'janitor', 'fishgrowth', 'readxl', 'nlstools')
 if(length(libs[which(libs %in% rownames(installed.packages()) == FALSE )]) > 0) {
   install.packages(libs[which(libs %in% rownames(installed.packages()) == FALSE)])}
 lapply(libs, library, character.only = TRUE)
 '%nin%'<-Negate('%in%') #this is a handy function
+round_any = function(x, accuracy, f=floor){f(x/ accuracy) * accuracy}
 
 # db connection----
 dbname <- "akfin"
@@ -167,11 +166,17 @@ estL14_2 <- (14.9558^-1 + (102.12^-1 - 14.9558^-1)* ((1-exp(-0.3669*(ages - 0)))
 modest14_2 <- bind_cols(ages, estL14_2)
 names(modest14_2) <- c('age', 'length_cm')
 
+#when model allowed to est freely-----
+estL14_2bnd <- (23.8197^-4.13049 + (100.608^-4.13049 - 23.8197^-4.13049)* ((1-exp(-0.6444*(ages - 0)))/(1-exp(-0.6444*(26-0)))))^(1/-4.13049)
+modest14_2bnd <- bind_cols(ages, estL14_2bnd)
+names(modest14_2bnd) <- c('age', 'length_cm')
+
 ggplot(akdat2, aes(x= age, y=length_cm))+
   geom_point(alpha = 0.25)+
   geom_line(data = modestm1, aes(x = age, y = length_cm), color = 'red', lwd = 2)+
   geom_line(data = modestm2, aes(x = age, y = length_cm), color = 'green', lwd = 1.5)+
   geom_line(data = modest14_2, aes(x = age, y = length_cm), color = 'blue', lwd = 1.5)+
+  geom_line(data = modest14_2bnd, aes(x = age, y = length_cm), color = 'purple', lwd = 1.5)+
   labs(x = "Age (yr)", y= "Total length (cm)")+
   theme_bw()
 
@@ -189,14 +194,7 @@ ggplot(empLAA, aes(x = age, y = mLAA))+
   geom_line(data = modestm1, aes(x = age, y = length_cm), color = 'red', lwd = 2)+
   geom_line(data = modestm2, aes(x = age, y = length_cm), color = 'green', lwd = 1.5)+
   geom_line(data = modest14_2, aes(x = age, y = length_cm), color = 'blue', lwd = 1.5)+
+  geom_line(data = modest14_2bnd, aes(x = age, y = length_cm), color = 'purple', lwd = 1.5)+
   labs(x = "Age (yr)", y= "Total length (cm)")+
-  facet_grid(haul_year~.)+
   theme_bw()
-
-
-
-
-
-
-
 

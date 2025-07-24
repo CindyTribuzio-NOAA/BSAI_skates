@@ -46,169 +46,49 @@ mnew_SS <- SSsummarize(mnew_out)
 # plots the results
 SS_plots(mnew_out)
 
-# change widen selectivity bounds----
-#changing bounds directly in the control file for now
-bnd_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run3_M14_2d_widebounds_lselex')
+# Arun1 fixed growth parameters based on model estimated with Amax = 20----
+Arun1_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/agerun1_fixed_params_Amx20')
+run(dir = Arun1_mode_path, skipfinished = FALSE, exe = exe_loc)
 
-r4ss::run(dir = bnd_mod_path, skipfinished = FALSE, exe = exe_loc)
+mArun1 <- SS_output(Arun1_mode_path, printstats = FALSE, verbose = FALSE)
+mArun1_out <- SS_output(dir = Arun1_mode_path, verbose = TRUE)
 
-SSplotSelex(mbnd)
-
-#look at selectivity parameters output
-mbnd <- SS_output(bnd_mod_path, printstats = FALSE, verbose = FALSE)
-mbnd$parameters
-
-mbnd_selex <- mbnd$sizeselex %>% 
-  filter(Yr == 2023,
-         Factor == 'Lsel') %>% 
-  mutate(model = 'widebounds')
-
-mbnd_selexpars <- mbnd$SelSizeAdj %>% 
-  filter(Yr == 2023) %>% 
-  mutate(model = 'widebounds')
-
-selex_results <- mnew_selex %>% 
-  bind_rows(mbnd_selex, mold_selex) %>% 
-  select(-c(Factor, Yr, Sex, Label)) %>% 
-  pivot_longer(!c(Fleet, model), names_to = 'Lbin', values_to = 'Selectivity')
-
-ggplot(selex_results, aes(x = as.numeric(Lbin), y = Selectivity, color = model, shape = model))+
-  geom_point()+
-  geom_line()+
-  facet_grid(Fleet~.)+
-  theme_bw()
-
-# logistic selectivity for comparison to RTMB----
-# same as above, changing selectivity directly in control fil
-log_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run2_M14_2d_logistic_lselex')
-
-r4ss::run(dir = log_mod_path, skipfinished = FALSE, exe = exe_loc)
-
-mlog <- SS_output(log_mod_path, printstats = FALSE, verbose = FALSE)
-
-SSplotSelex(mlog)
-
-mlog_selexpars <- mlog$SelSizeAdj %>% 
-  filter(Yr == 2023) %>% 
-  mutate(model = 'logistic')
-
-# changing growth init parameters----
-gparam_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_M14_2d_Gparams')
-#changing INIT parameters directly in the control file for now
-
-r4ss::run(dir = gparam_mod_path, skipfinished = FALSE, exe = exe_loc)
-
-gparam_out <- SS_output(dir = gparam_mod_path, verbose = TRUE)
-
-gparam_SS <- SSsummarize(gparam_out)
+#mArun1_SS <- SSsummarize(mArun1_out)
 
 # plots the results
-SS_plots(gparam_out)
+SS_plots(mArun1_out)
 
-# pull out parameters for summary table ----
-llhoods <- gparam_out$likelihoods
-SSB <- gparam_out$SpawnBio %>% 
-  bind_cols(gparam_out$SpawnBioLower$replist1, gparam_out$SpawnBioUpper$replist1, gparam_out$SpawnBioSD$replist1) %>% 
-  select(year = Yr, SSB = replist1, SSBLL = ...4, SSBUL = ...5, SSBSD = ...6) %>% 
-  mutate(CV = SSBSD/SSB)
+# Arun2 fixed growth parameters based on model estimated with Amax = 26----
+Arun2_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/agerun2_fixed_params_Amx26')
+run(dir = Arun2_mode_path, skipfinished = FALSE, exe = exe_loc)
 
+mArun2 <- SS_output(Arun2_mode_path, printstats = FALSE, verbose = FALSE)
+mArun2_out <- SS_output(dir = Arun2_mode_path, verbose = TRUE)
 
-recruit <- M14_2_SS$recruits %>% 
-  bind_cols(M14_2_SS$recruitsLower$replist1, M14_2_SS$recruitsUpper$replist1, M14_2_SS$recruitsSD$replist1) %>% 
-  select(year = Yr, rec = replist1, recLL = ...4, recUL = ...5, recSD = ...6) %>% 
-  mutate(CV = recSD/rec)
-write_csv(recruit, paste0(getwd(), "/Output/", AYR, "/Tier3/M14_2recruit_summary.csv"))
+#mArun1_SS <- SSsummarize(mArun1_out)
 
-pars <- M14_2_SS$pars %>% 
-  bind_cols(M14_2_SS$parsSD$replist1) %>% 
-  select(Parameter = Label, value = replist1, parSD = ...5)
+# plots the results
+SS_plots(mArun2_out)
 
+# run4 Arun2 with wider length selectivity ----
+run4_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_Arun2_slxbnds')
+run(dir = run4_mode_path, skipfinished = FALSE, exe = exe_loc)
 
+mrun4 <- SS_output(run4_mode_path, printstats = FALSE, verbose = FALSE)
+mrun4_out <- SS_output(dir = run4_mode_path, verbose = TRUE)
 
+#mArun1_SS <- SSsummarize(mArun1_out)
 
-# fixing growth outside of the model----
-grow_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_M14_2d_fixedgrowth')
-
-waa <- r4ss::SS_readwtatage(file = paste0(grow_mod_path, '/wtatage.ss_new'))
-out <- r4ss::SS_output(grow_mod_path, verbose = TRUE)
-
-# Extract Data ------------------------------------------------------------
-
-# define dimensions
-n_regions <- 1 # number of regions
-n_sexes <- 1 # number of sexes
-n_fish_fleets <- 2 # number of fishery fleets
-n_srv_fleets <- 1 # number of survey fleets
-years <- 1950:2023 # years
-n_yrs <- length(years) # number of years
-ages <- 0:25 # vector of ages
-n_ages <- length(ages) # number of ages
-lens <- out$lbins # vector of lengths
-n_lens <- length(lens) # number of length bins
-spwn_month <- 1 # spawning month (start of year)
-
-### Demographics ------------------------------------------------------------
-
-# weight at age
-waa <- out$ageselex %>% filter(Label == '1952_1_bodywt')
-waa_arr <- array(0, dim = c(n_regions, n_yrs, n_ages, n_sexes))
-waa_arr[] <- rep(out$endgrowth$Wt_Mid, each = n_yrs)
-
-# get length at age and sd to construct ALK
-laa <- out$endgrowth$Len_Mid # length at age
-sd <- out$endgrowth$SD_Mid # sd of length at age
-
-# construct alk
-get_al_trans_matrix = function(age_bins, len_bins, mean_length, sd) {
-  
-  # Construct age length matrix
-  age_length = matrix(0.0, nrow = length(age_bins), ncol = length(len_bins))
-  
-  for(age_ndx in 1:length(age_bins)) {
-    for(len_ndx in 1:length(len_bins)) {
-      if (len_ndx == 1) {
-        age_length[age_ndx, len_ndx] = pnorm(len_bins[2], mean_length[age_ndx], sd[age_ndx])
-      } else if (len_ndx == length(len_bins)) {
-        age_length[age_ndx, len_ndx] = 1 - pnorm(len_bins[length(len_bins)], mean_length[age_ndx], sd[age_ndx])
-      } else {
-        age_length[age_ndx, len_ndx] = pnorm(len_bins[len_ndx+1], mean_length[age_ndx], sd[age_ndx]) -  
-          pnorm(len_bins[len_ndx], mean_length[age_ndx], sd[age_ndx])
-      }
-    }
-  }
-  return(age_length)
-} # end function
-
-alk <- get_al_trans_matrix(age_bins = ages,
-                           len_bins  = lens,
-                           mean_length =  as.numeric(unlist(laa)),
-                           sd = as.numeric(unlist(sd))
-)
-
-# normalize ALK in case it doesnt sum to 1
-alk <- t(apply(alk, 1, function(x) x / sum(x)))
-
-# populate size age transition matrix
-sizeage <- array(0, dim = c(n_regions, n_yrs, n_lens, n_ages, n_sexes))
-for(i in 1:n_yrs) sizeage[1,i,,,1] <- t(alk)
-
-
-
-
-
-
-
-
-
+# plots the results
+SS_plots(mrun4_out)
 
 #overall comparison of model runs----
 datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
 setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
-                                     "run1_M14_2d_ss3version", 
-                                     "run2_M14_2d_logistic_lselex", 
-                                     "run3_M14_2d_widebounds_lselex",
-                                     "run4_M14_2d_Gparams"))
+                                     "agerun1_fixed_params_Amx20", 
+                                     "agerun2_fixed_params_Amx26",
+                                     "run4_Arun2_slxbnds"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 
 model_comp <- SSsummarize(bridge_out)
@@ -216,7 +96,7 @@ model_comp <- SSsummarize(bridge_out)
 SSplotComparisons(model_comp,
                         print = TRUE,
                         plotdir = here::here(datapath),
-                        legendlabels = c('base', 'updated SS3', 'logistic', 'bounds', 'jitter growth'))
+                        legendlabels = c('base', 'Amax20', 'Amax26', 'slxbnds'))
 
 
 
@@ -243,22 +123,5 @@ SSplotComparisons(model_comp,
 
 
 
-# compare old vs. new SS3 versions applied to 2017 inputs
-oldv_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/base_M14_2d_fixedcatch')
 
-mold <- SS_output(oldv_path, printstats = FALSE, verbose = FALSE)
-
-mbnd <- SS_output(bnd_mod_path, printstats = FALSE, verbose = FALSE)
-SStableComparisons(
-  SSsummarize(list(mold, mnew, mbnd)),
-  names = c("NatM", "SSB_Virgin", "SSB_2017", "Bratio_2017"),
-  likenames = NULL,
-  modelnames = c("3.30.21.00", "3.30.23.2", "Bounds"),
-) |>
-  dplyr::mutate(across(-1, ~ round(.x, 3)))
-
-SSplotComparisons(list(mold, mnew, mbnd), subplots = "selectivity")
-
-summarymodels <- SSsummarize(list(mold, mnew, mbnd))
-SSplotComparisons(summarymodels, subplots = "selectivity")
 

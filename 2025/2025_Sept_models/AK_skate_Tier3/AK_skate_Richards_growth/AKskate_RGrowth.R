@@ -3,7 +3,7 @@
 # Last Updated: July 2025
 
 # Setup ----
-libs <- c("tidyverse", "RODBC", 'stats', 'janitor', 'fishgrowth', 'readxl', 'nlstools')
+libs <- c("tidyverse", "RODBC", 'stats', 'janitor', 'readxl', 'nlstools', 'lubridate')
 if(length(libs[which(libs %in% rownames(installed.packages()) == FALSE )]) > 0) {
   install.packages(libs[which(libs %in% rownames(installed.packages()) == FALSE)])}
 lapply(libs, library, character.only = TRUE)
@@ -20,6 +20,7 @@ password_akfin=db %>% filter(database == dbname) %>% select(password)
 channel_akfin <- odbcConnect(dbname, uid = username_akfin, pwd = password_akfin, believeNRows=FALSE)
 
 #query gap_products----
+#don't run if data have already been queried
 AKskt_dat <- sqlQuery(channel_akfin, query = ("
                 select * from gap_products.akfin_specimen a
                 left join gap_products.akfin_haul b
@@ -35,6 +36,10 @@ AKskt_dat <- sqlQuery(channel_akfin, query = ("
 #data were compared to a direct pull from the AGP database and everything matches
 write_csv(AKskt_dat, paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth/AKskate_gap_ages.csv'))
 
+#read in the data if skipping the query step above
+AKskt_dat <- read_csv(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth/AKskate_gap_ages.csv'))
+
+#clean up the data and prep for analyses
 AKskt_dat <- AKskt_dat %>% 
   select(c('cruisejoin', 'hauljoin', 'haul_year', 'yrmday', 'specimen_id', 'species_code', 'length_cm', 'sex', 'weight_g', 'age', 'maturity'))
 
@@ -68,29 +73,39 @@ surv_ages <- surv2003 %>%
 akdat2 <- AKskt_dat %>% 
   bind_rows(surv_ages)
 
+# adjust date----
+# SS3 estimates growth at the first of the year, but our ages are from July. For the model, use 
+# Jul 15 which is 196th day of 365 day year
+adj <- yday("2025-07-15 12:00:00 UTC")/365
+
+akdat2 <- akdat2 %>% 
+  mutate(age_adj = age + adj)
+
+
 # Schnute/Richards growth model----
 # matches formulation in SS3, see user manuals: https://github.com/nmfs-ost/ss3-doc/releases
 
 start <- list(L0=15, Linf=102, k=0.2, g=-1)
-m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age - 0)))/(1-exp(-k*(26-0)))))^(1/g)
+m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age_adj - 0)))/(1-exp(-k*(26-0)))))^(1/g)
 fitm1 <- nls(m1, data = akdat2, start = start)
 summary(fitm1)
 confint(fitm1)
 fitpm1 <- as.data.frame(coef(fitm1))
 
 ages <- seq(0, 26)
+age_adj <- ages + adj
 estLm1 <- (fitpm1[1,1]^fitpm1[4,1] + (fitpm1[2,1]^fitpm1[4,1] - fitpm1[1,1]^fitpm1[4,1])* ((1-exp(-fitpm1[3,1]*(ages - 0)))/(1-exp(-fitpm1[3,1]*(26-0)))))^(1/fitpm1[4,1])
-modestm1 <- bind_cols(ages, estLm1)
-names(modestm1) <- c('age', 'length_cm')
+modestm1 <- bind_cols(age_adj, estLm1)
+names(modestm1) <- c('age_adj', 'length_cm')
 
 
-AKskt_growthfit <- ggplot(akdat2, aes(x=age, y=length_cm))+
+AKskt_growthfit <- ggplot(akdat2, aes(x=age_adj, y=length_cm))+
   geom_point(alpha=0.5, aes(color=factor(haul_year))) +
   geom_smooth(lwd=1.3, method = "nls",
               se = FALSE,
               method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(x - 0)))/(1-exp(-k*(26-0)))))^(1/g),
                                  start = start)) +
-  geom_line(data = modestm1, aes(x = age, y = length_cm), color = 'red')+ #just tests that the geom_smooth is the same as the converged nls model
+  geom_line(data = modestm1, aes(x = age_adj, y = length_cm), color = 'red')+ #just tests that the geom_smooth is the same as the converged nls model
   scale_color_viridis_d() +
   labs(x = "Age (yr)", y= "Total length (mm)", color = "Year")+
   theme_bw()
@@ -99,10 +114,10 @@ ggsave(path = paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Ri
        "AKskt_fitgrowth.png",plot = AKskt_growthfit,dpi=600,width = 8, height = 8)
 
 
-ggplot(akdat2, aes(x= age, y=length_cm))+
+ggplot(akdat2, aes(x= age_adj, y=length_cm))+
   #geom_boxplot(alpha=0.5) +
   geom_jitter(alpha = 0.25)+
-  #geom_line(modest, aes(x = age, y = length_cm))+
+  #geom_line(modest, aes(x = age_adj, y = length_cm))+
   geom_smooth(lwd=1.3, method = "nls",
               se = FALSE,
               method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(x - 0)))/(1-exp(-k*(20-0)))))^(1/g),
@@ -110,37 +125,38 @@ ggplot(akdat2, aes(x= age, y=length_cm))+
 
 
 # model fit by year ----
-AKskt_growthyr <- ggplot(akdat2, aes(x=age, y=length_cm, colour = as.factor(haul_year)))+
-  geom_point(alpha=0.5) +
-  geom_smooth(lwd=1.3, method = "nls",
-              se = FALSE,
-              method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* (1-exp(-k*(x - 0))/(1-exp(-k*(26-0)))))^(1/g),
-                                 start = start)) +
-  scale_color_viridis_d() +
-  labs(x = "Age (yr)", y= "Total length (mm)", color = "Year")+
-  theme_bw()
-ggsave(path = paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth"),
-       "AKskt_growthyr.png",plot = AKskt_growthyr, dpi=600,width = 8, height = 8)
+#model struggles to fit each year, turned off for now
+#AKskt_growthyr <- ggplot(akdat2, aes(x=age_adj, y=length_cm, colour = as.factor(haul_year)))+
+#  geom_point(alpha=0.5) +
+#  geom_smooth(lwd=1.3, method = "nls",
+#              se = FALSE,
+#              method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* (1-exp(-k*(x - 0))/(1-exp(-k*(26-0)))))^(1/g),
+#                                 start = start)) +
+#  scale_color_viridis_d() +
+#  labs(x = "Age (yr)", y= "Total length (mm)", color = "Year")+
+#  theme_bw()
+#ggsave(path = paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth"),
+#       "AKskt_growthyr.png",plot = AKskt_growthyr, dpi=600,width = 8, height = 8)
 
-AKskt_growthyr2 <- ggplot(akdat2, aes(x=age, y=length_cm, colour = as.factor(haul_year)))+
-  geom_point(alpha=0.5) +
-  geom_smooth(lwd=1.3, method = "nls",
-              se = FALSE,
-              method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* (1-exp(-k*(x - 0))/(1-exp(-k*(26-0)))))^(1/g),
-                                 start = start)) +
-  scale_color_viridis_d() +
-  facet_wrap(.~haul_year, ncol = 2)+
-  labs(x = "Age (yr)", y= "Total length (mm)", color = "Year")+
-  theme_bw()
+#AKskt_growthyr2 <- ggplot(akdat2, aes(x=age_adj, y=length_cm, colour = as.factor(haul_year)))+
+#  geom_point(alpha=0.5) +
+#  geom_smooth(lwd=1.3, method = "nls",
+#              se = FALSE,
+#              method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* (1-exp(-k*(x - 0))/(1-exp(-k*(26-0)))))^(1/g),
+#                                 start = start)) +
+#  scale_color_viridis_d() +
+#  facet_wrap(.~haul_year, ncol = 2)+
+#  labs(x = "Age (yr)", y= "Total length (mm)", color = "Year")+
+#  theme_bw()
 
-ggsave(path = paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth"),
-       "AKskt_growthyr2.png",plot = AKskt_growthyr2, dpi=600,width = 8, height = 8)
+#ggsave(path = paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth"),
+#       "AKskt_growthyr2.png",plot = AKskt_growthyr2, dpi=600,width = 8, height = 8)
 
 # Amax = 20 instead of full dataset----
 akdat3 <- akdat2 %>% 
   filter(age < 26)
 
-m2 <- akdat3$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat3$age - 0)))/(1-exp(-k*(20-0)))))^(1/g)
+m2 <- akdat3$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat3$age_adj - 0)))/(1-exp(-k*(20-0)))))^(1/g)
 fitm2 <- nls(m2, data = akdat3, start = start)
 summary(fitm2)
 confint(fitm2)
@@ -148,10 +164,10 @@ confint(fitm2)
 fitpm2 <- as.data.frame(coef(fitm2))
 
 estLm2 <- (fitpm2[1,1]^fitpm2[4,1] + (fitpm2[2,1]^fitpm2[4,1] - fitpm2[1,1]^fitpm2[4,1])* ((1-exp(-fitpm2[3,1]*(ages - 0)))/(1-exp(-fitpm2[3,1]*(26-0)))))^(1/fitpm2[4,1])
-modestm2 <- bind_cols(ages, estLm2)
-names(modestm2) <- c('age', 'length_cm')
+modestm2 <- bind_cols(age_adj, estLm2)
+names(modestm2) <- c('age_adj', 'length_cm')
 
-ggplot(akdat3, aes(x=age, y=length_cm))+
+ggplot(akdat3, aes(x=age_adj, y=length_cm))+
   geom_point(alpha=0.5, aes(color=factor(haul_year))) +
   geom_smooth(lwd=1.3, method = "nls",
               se = FALSE,
@@ -163,30 +179,30 @@ ggplot(akdat3, aes(x=age, y=length_cm))+
 
 # compare m1 and m2 (Amax = 26 vs Amax = 20) to what's in current assessment
 estL14_2 <- (14.9558^-1 + (102.12^-1 - 14.9558^-1)* ((1-exp(-0.3669*(ages - 0)))/(1-exp(-0.3669*(26-0)))))^(1/-1)
-modest14_2 <- bind_cols(ages, estL14_2)
-names(modest14_2) <- c('age', 'length_cm')
+modest14_2 <- bind_cols(age_adj, estL14_2)
+names(modest14_2) <- c('age_adj', 'length_cm')
 
 #when model allowed to est freely-----
 estL14_2bnd <- (23.8197^-4.13049 + (100.608^-4.13049 - 23.8197^-4.13049)* ((1-exp(-0.6444*(ages - 0)))/(1-exp(-0.6444*(26-0)))))^(1/-4.13049)
-modest14_2bnd <- bind_cols(ages, estL14_2bnd)
-names(modest14_2bnd) <- c('age', 'length_cm')
+modest14_2bnd <- bind_cols(age_adj, estL14_2bnd)
+names(modest14_2bnd) <- c('age_adj', 'length_cm')
 
-ggplot(akdat2, aes(x= age, y=length_cm))+
+ggplot(akdat2, aes(x= age_adj, y=length_cm))+
   geom_point(alpha = 0.25)+
-  geom_line(data = modestm1, aes(x = age, y = length_cm), color = 'red', lwd = 2)+
-  geom_line(data = modestm2, aes(x = age, y = length_cm), color = 'green', lwd = 1.5)+
-  geom_line(data = modest14_2, aes(x = age, y = length_cm), color = 'blue', lwd = 1.5)+
-  geom_line(data = modest14_2bnd, aes(x = age, y = length_cm), color = 'purple', lwd = 1.5)+
+  geom_line(data = modestm1, aes(x = age_adj, y = length_cm), color = 'red', lwd = 2)+
+  geom_line(data = modestm2, aes(x = age_adj, y = length_cm), color = 'green', lwd = 1.5)+
+  geom_line(data = modest14_2, aes(x = age_adj, y = length_cm), color = 'blue', lwd = 1.5)+
+  geom_line(data = modest14_2bnd, aes(x = age_adj, y = length_cm), color = 'purple', lwd = 1.5)+
   labs(x = "Age (yr)", y= "Total length (cm)")+
   theme_bw()
 
-# mean length at age-----
+# mean length at age_adj-----
 # direct comparison of growth parameters to data going into the model
 
 # matches the data in the model data file
 empLAA <- akdat2 %>%
   filter(haul_year != 2004) %>% #2004 not in model, probably due to small sample size
-  group_by(age, haul_year) %>% 
+  group_by(age_a, haul_year) %>% 
   summarise(mLAA = mean(length_cm), nper = length(length_cm))
 
 ggplot(empLAA, aes(x = age, y = mLAA))+

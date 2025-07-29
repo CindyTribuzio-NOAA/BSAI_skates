@@ -71,10 +71,10 @@
 # Sex: 1  BioPattern: 1  NatMort
  0.05 0.15 0.13 0.13 0.8 0 -3 0 0 0 0 0 0 0 # NatM_uniform_Fem_GP_1
 # Sex: 1  BioPattern: 1  Growth
- -10 30 26.3242366 20 99 0 -3 0 0 0 0 0 0 0 # L_at_Amin_Fem_GP_1
- 70 150 109.0654187 110 10 0 -3 0 0 0 0 0 0 0 # L_at_Amax_Fem_GP_1
- 0.05 0.5 0.3562347 0.15 0.8 0 -3 0 0 0 0 0 0 0 # VonBert_K_Fem_GP_1
- -1 2 -1 -1.9026111 0.5 0 -3 0 0 0 0 0 0 0 # Richards_Fem_GP_1
+ -10 30 23.9531567 20 99 0 -3 0 0 0 0 0 0 0 # L_at_Amin_Fem_GP_1
+ 70 150 109.0492890 110 10 0 -3 0 0 0 0 0 0 0 # L_at_Amax_Fem_GP_1
+ 0.05 0.5 0.3562382 0.15 0.8 0 -3 0 0 0 0 0 0 0 # VonBert_K_Fem_GP_1
+ -1 2 -1 -1.9026458 0.5 0 -3 0 0 0 0 0 0 0 # Richards_Fem_GP_1
  0.05 0.35 0.324843 0.1 0.8 0 -3 0 0 0 0 0 0 0 # CV_young_Fem_GP_1
  0.05 0.25 0.05 0.1 0.8 0 -3 0 0 0 0 0 0 0 # CV_old_Fem_GP_1
 # Sex: 1  BioPattern: 1  WtLen

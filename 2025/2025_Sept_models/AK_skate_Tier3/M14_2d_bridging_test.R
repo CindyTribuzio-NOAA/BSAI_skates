@@ -107,6 +107,55 @@ mrun6_out <- SS_output(dir = run6_mode_path, verbose = TRUE)
 # plots the results
 SS_plots(mrun6_out)
 
+#run7 estimating CV_young/CV_old-----
+run7_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run7_A26_cvbnds')
+run(dir = run7_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun7 <- SS_output(run7_mode_path, printstats = FALSE, verbose = FALSE)
+mrun7_out <- SS_output(dir = run7_mode_path, verbose = TRUE)
+
+#mArun1_SS <- SSsummarize(mArun1_out)
+
+# plots the results
+SS_plots(mrun7_out)
+
+#run8 estimating CV_young/CV_old with wide bounds-----
+run8_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run8_A26_cvwidebnds')
+run(dir = run8_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun8 <- SS_output(run8_mode_path, printstats = FALSE, verbose = FALSE)
+mrun8_out <- SS_output(dir = run8_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun8_out)
+
+#run9 fixing CV_young/CV_old = 0.5-----
+run9_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run9_A26_cvfixed')
+run(dir = run9_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun9 <- SS_output(run9_mode_path, printstats = FALSE, verbose = FALSE)
+mrun9_out <- SS_output(dir = run9_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun9_out)
+
+#fixed growth comparison of model runs----
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
+                                     "run5_growth_bnds",
+                                     "agerun1_fixed_params_Amx20", 
+                                     "agerun2_fixed_params_Amx26",
+                                     "run7_A26_cvbnds",
+                                     "run8_A26_cvwidebnds",
+                                     "run9_A26_cvfixed"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(datapath),
+                  legendlabels = c('base',  'grbnds', 'Amax20', 'Amax26', 'estCV', 'CVwidebnds', 'CVfixed'))
 
 
 #overall comparison of model runs----
@@ -124,7 +173,7 @@ model_comp <- SSsummarize(bridge_out)
 SSplotComparisons(model_comp,
                         print = TRUE,
                         plotdir = here::here(datapath),
-                        legendlabels = c('base', 'Amax20', 'Amax26', 'slxbnds', 'grbnds'))
+                        legendlabels = c('base', 'Amax20', 'Amax26', 'slxbnds', 'grbnds', 'surveyslx'))
 
 
 

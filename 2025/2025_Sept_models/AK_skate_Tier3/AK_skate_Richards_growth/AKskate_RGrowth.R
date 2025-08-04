@@ -214,3 +214,12 @@ ggplot(empLAA, aes(x = age, y = mLAA))+
   labs(x = "Age (yr)", y= "Total length (cm)")+
   theme_bw()
 
+# CV by age ----
+# CV for Age 0 (or 0+adj) and Amax (or Amax+adj)
+
+akdat4 <- akdat2 %>% 
+  group_by(age_adj) %>% 
+  summarise(nages = length(length_cm), sd_length = sd(length_cm), 
+            m_length = mean(length_cm), cv_length = sd_length/m_length)
+ggplot(akdat4, aes(x = age_adj, y = cv_length))+
+  geom_point()

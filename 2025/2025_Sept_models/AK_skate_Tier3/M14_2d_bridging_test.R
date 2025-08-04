@@ -70,17 +70,6 @@ mArun2_out <- SS_output(dir = Arun2_mode_path, verbose = TRUE)
 # plots the results
 SS_plots(mArun2_out)
 
-# run4 Arun2 with wider length selectivity ----
-run4_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_Arun2_slxbnds')
-run(dir = run4_mode_path, skipfinished = FALSE, exe = exe_loc)
-
-mrun4 <- SS_output(run4_mode_path, printstats = FALSE, verbose = FALSE)
-mrun4_out <- SS_output(dir = run4_mode_path, verbose = TRUE)
-
-#mArun1_SS <- SSsummarize(mArun1_out)
-
-# plots the results
-SS_plots(mrun4_out)
 
 # run5 base model with wider bounds on growth----
 run5_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run5_growth_bnds')
@@ -93,19 +82,6 @@ mrun5_out <- SS_output(dir = run5_mode_path, verbose = TRUE)
 
 # plots the results
 SS_plots(mrun5_out)
-
-#run6 with new selex paramters-----
-# and fixed descending limb at 1 for survey
-run6_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run6_arun2_slxparams')
-run(dir = run6_mode_path, skipfinished = FALSE, exe = exe_loc)
-
-mrun6 <- SS_output(run6_mode_path, printstats = FALSE, verbose = FALSE)
-mrun6_out <- SS_output(dir = run6_mode_path, verbose = TRUE)
-
-#mArun1_SS <- SSsummarize(mArun1_out)
-
-# plots the results
-SS_plots(mrun6_out)
 
 #run7 estimating CV_young/CV_old-----
 run7_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run7_A26_cvbnds')
@@ -129,7 +105,9 @@ mrun8_out <- SS_output(dir = run8_mode_path, verbose = TRUE)
 # plots the results
 SS_plots(mrun8_out)
 
-#run9 fixing CV_young/CV_old = 0.5-----
+#run9 fixing CV_young/CV_old-----
+# values empirically derived from data for A0. 
+# No CV for Amax 26, so set at 1
 run9_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run9_A26_cvfixed')
 run(dir = run9_mode_path, skipfinished = FALSE, exe = exe_loc)
 
@@ -157,6 +135,82 @@ SSplotComparisons(model_comp,
                   plotdir = here::here(datapath),
                   legendlabels = c('base',  'grbnds', 'Amax20', 'Amax26', 'estCV', 'CVwidebnds', 'CVfixed'))
 
+# Selectivity explorations----
+# run4 Arun2 with wider length selectivity ----
+run4_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run4_Arun2_slxbnds')
+run(dir = run4_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun4 <- SS_output(run4_mode_path, printstats = FALSE, verbose = FALSE)
+mrun4_out <- SS_output(dir = run4_mode_path, verbose = TRUE)
+
+#mArun1_SS <- SSsummarize(mArun1_out)
+
+# plots the results
+SS_plots(mrun4_out)
+
+# run6 with new selex paramters-----
+# and fixed descending limb at 1 for survey, but with old growth parameters
+run6_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run6_arun2_slxparams')
+run(dir = run6_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun6 <- SS_output(run6_mode_path, printstats = FALSE, verbose = FALSE)
+mrun6_out <- SS_output(dir = run6_mode_path, verbose = TRUE)
+
+#mArun1_SS <- SSsummarize(mArun1_out)
+
+# plots the results
+SS_plots(mrun6_out)
+
+# run10 with slx parameters-----
+# and fixed descending limb at 1 for survey and trawl fishery
+# used S Barbeaux's control file
+run10_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run10_run9slx')
+run(dir = run10_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun10 <- SS_output(run10_mode_path, printstats = FALSE, verbose = FALSE)
+mrun10_out <- SS_output(dir = run10_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun10_out)
+
+# run11 with slx parameters-----
+# and fixed descending limb at 1 for survey, allowed trawl fishery to be dome
+# used S Barbeaux's control file
+run11_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run11_run9slx')
+run(dir = run11_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun11 <- SS_output(run11_mode_path, printstats = FALSE, verbose = FALSE)
+mrun11_out <- SS_output(dir = run11_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun11_out)
+
+# run12 with S-R parameters-----
+# used S Barbeaux's control file
+run12_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run12_run10rec')
+run(dir = run12_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun12 <- SS_output(run12_mode_path, printstats = FALSE, verbose = FALSE)
+mrun12_out <- SS_output(dir = run12_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun12_out)
+
+# Compare slx models ----
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
+                                     "run9_A26_cvfixed",
+                                     "run10_run9slx",
+                                     "run11_run9slx",
+                                     "run12_run10rec"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/plots_selex_compare')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('base', 'fixg', 'slx', 'slx2', 'SR'))
+
 
 #overall comparison of model runs----
 datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
@@ -170,9 +224,10 @@ bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch",
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 model_comp <- SSsummarize(bridge_out)
 
+
 SSplotComparisons(model_comp,
                         print = TRUE,
-                        plotdir = here::here(datapath),
+                        plotdir = here::here(plotpath),
                         legendlabels = c('base', 'Amax20', 'Amax26', 'slxbnds', 'grbnds', 'surveyslx'))
 
 

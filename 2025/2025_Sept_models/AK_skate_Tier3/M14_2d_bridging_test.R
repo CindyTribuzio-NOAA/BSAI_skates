@@ -196,20 +196,45 @@ mrun12_out <- SS_output(dir = run12_mode_path, verbose = TRUE)
 # plots the results
 SS_plots(mrun12_out)
 
-# Compare slx models ----
+# run13 with estimating q-----
+# 
+run13_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run13_run12estq')
+run(dir = run13_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun13 <- SS_output(run13_mode_path, printstats = FALSE, verbose = FALSE)
+mrun13_out <- SS_output(dir = run13_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun13_out)
+
+# run13 allowing selectivity and fixq at values-----
+# 
+run14_mode_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/run14_wdslx_estq')
+run(dir = run14_mode_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun14 <- SS_output(run14_mode_path, printstats = FALSE, verbose = FALSE)
+mrun14_out <- SS_output(dir = run14_mode_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun14_out)
+
+
+# Compare selected models ----
 setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
                                      "run9_A26_cvfixed",
                                      "run10_run9slx",
                                      "run11_run9slx",
-                                     "run12_run10rec"))
+                                     "run12_run10rec",
+                                     "run13_run12estq",
+                                     "run14_wdslx_estq"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 model_comp <- SSsummarize(bridge_out)
-plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/plots_selex_compare')
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/plots_compare')
 SSplotComparisons(model_comp,
                   print = TRUE,
                   plotdir = here::here(plotpath),
-                  legendlabels = c('base', 'fixg', 'slx', 'slx2', 'SR'))
+                  legendlabels = c('base', 'fixgA26', 'SBslx', 'SBslx_dometwl', 'SR', 'q', 'slx+q=0.75'))
 
 
 #overall comparison of model runs----

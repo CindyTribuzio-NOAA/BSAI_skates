@@ -81,47 +81,32 @@ adj <- yday("2025-07-15 12:00:00 UTC")/365
 akdat2 <- akdat2 %>% 
   mutate(age_adj = age + adj)
 
-# A2 Schnute estimation----
-# do we have sufficient data to estimate A2?
-start <- list(L0=15, Linf=102, k=0.2, g=-1, A2 = 12)
-A1 <- 0
-#A2 <- 12.47316
-m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age_adj - A1)))/(1-exp(-k*(A2-A1)))))^(1/g)
-fitm1 <- nls(m1, data = akdat2, start = start)
-summary(fitm1)
-confint(fitm1)
-
-df <- akdat2 %>% 
-  select(age_adj, length_cm)
-A1_fixed <- 0
-A2_fixed <- 15
-schnute_fun <- function(age, A1, A2, L1, L2, K, v=1){
-  # this implements: L(a) = [ L1^v + (L2^v - L1^v) * (1 - exp(-K*(a - A1))) / (1 - exp(-K*(A2 - A1))) ]^(1/v)
-  num  <- 1 - exp(-K*(age - A1))
-  den  <- 1 - exp(-K*(A2 - A1))
-  outv <- ( (L1^v) + ( (L2^v - L1^v) * (num/den) ) )
-  out  <- outv^(1/v)
-  return(out)
-}
-fit2 <- nls(length_cm ~ schnute_fun(age_adj, A1_fixed, A2_fixed, L1, L2, K, v),
-            data = df,
-            start = list(#A2 = max(df$age_adj),
-                         L1 = quantile(df$length_cm,0.1),
-                         L2 = quantile(df$length_cm,0.9),
-                         K  = 0.2,
-                         v  = 1),
-            algorithm = "port",
-            lower = c(A2 = min(df$age_adj)+0.1, L1=0.1, L2=0.1, K=1e-6, v=0.1),
-            upper = c(A2 = max(df$age_adj)*2,       L1=Inf,  L2=Inf,  K=5,     v=5))
-
 # Schnute/Richards growth model----
 # matches formulation in SS3, see user manuals: https://github.com/nmfs-ost/ss3-doc/releases
-
 start <- list(L0=15, Linf=120, k=0.2, g=1)
 lower <- list(L0=0.1, Linf=0.1, k=1e-6, g=-5)
 upper <- list(L0=Inf, Linf=Inf, k=5, g=5)
 A1 <- 0
-A2 <- 14.5
+A2 <- 15 #not sufficient data to estimate A2, informed by mean size at age
+m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age_adj - A1)))/(1-exp(-k*(A2-A1)))))^(1/g)
+fitm1 <- nls(m1, 
+             data = akdat2, 
+             start = start,
+             algorithm = 'port',
+             lower = lower,
+             upper = upper)
+summary(fitm1)
+confint(fitm1)
+fitpm1 <- as.data.frame(coef(fitm1))
+
+# Approxmate Gompertz growth----
+# fix g = 0 approximates the Gompertz growth function
+start <- list(L0=15, Linf=120, k=0.2)
+lower <- list(L0=0.1, Linf=0.1, k=1e-6)
+upper <- list(L0=Inf, Linf=Inf, k=5)
+A1 <- 0
+A2 <- 15 #not sufficient data to estimate A2, informed by mean size at age
+g <- 0.0001
 m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age_adj - A1)))/(1-exp(-k*(A2-A1)))))^(1/g)
 fitm1 <- nls(m1, 
              data = akdat2, 
@@ -134,10 +119,10 @@ confint(fitm1)
 fitpm1 <- as.data.frame(coef(fitm1))
 
 #calculate A2 to feed back into model
-A2dat <- akdat2 %>% 
-  filter(length_cm %in% c(floor(fitpm1[2,1]), ceiling(fitpm1[2,1]))) %>% 
-  group_by() %>% 
-  summarise(A2 = mean(age_adj))
+#A2dat <- akdat2 %>% 
+#  filter(length_cm %in% c(floor(fitpm1[2,1]), ceiling(fitpm1[2,1]))) %>% 
+#  group_by() %>% 
+#  summarise(A2 = mean(age_adj))
 
 #plot it
 ages <- seq(0, 26)
@@ -203,8 +188,11 @@ ggplot(akdat2, aes(x= age_adj, y=length_cm))+
 # Amax = 20 instead of full dataset----
 akdat3 <- akdat2 %>% 
   filter(age < 26)
-A2 <- 14.5
-fitm2 <- nls(m1,
+start <- list(L0=15, Linf=103, k=0.2, g=1)
+lower <- list(L0=0.1, Linf=0.1, k=1e-6, g=-5)
+upper <- list(L0=Inf, Linf=Inf, k=5, g=5)
+m2 <- akdat3$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat3$age_adj - A1)))/(1-exp(-k*(A2-A1)))))^(1/g)
+fitm2 <- nls(m2, 
              data = akdat3, 
              start = start,
              algorithm = 'port',
@@ -215,13 +203,7 @@ confint(fitm2)
 
 fitpm2 <- as.data.frame(coef(fitm2))
 
-#calculate A2 to feed back into model
-A2dat <- akdat3 %>% 
-  filter(length_cm %in% c(floor(fitpm2[2,1]), ceiling(fitpm2[2,1]))) %>% 
-  group_by() %>% 
-  summarise(A2 = mean(age_adj))
-
-estLm2 <- (fitpm2[1,1]^fitpm2[4,1] + (fitpm2[2,1]^fitpm2[4,1] - fitpm2[1,1]^fitpm2[4,1])* ((1-exp(-fitpm2[3,1]*(ages_adj - 0)))/(1-exp(-fitpm2[3,1]*(26-0)))))^(1/fitpm2[4,1])
+estLm2 <- (fitpm2[1,1]^fitpm2[4,1] + (fitpm2[2,1]^fitpm2[4,1] - fitpm2[1,1]^fitpm2[4,1])* ((1-exp(-fitpm2[3,1]*(age_adj - A1)))/(1-exp(-fitpm2[3,1]*(A2-A1)))))^(1/fitpm2[4,1])
 modestm2 <- bind_cols(age_adj, estLm2)
 names(modestm2) <- c('age_adj', 'length_cm')
 
@@ -229,7 +211,7 @@ ggplot(akdat3, aes(x=age_adj, y=length_cm))+
   geom_point(alpha=0.5, aes(color=factor(haul_year))) +
   geom_smooth(lwd=1.3, method = "nls",
               se = FALSE,
-              method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(x - 0)))/(1-exp(-k*(20-0)))))^(1/g),
+              method.args = list(formula = y ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(x - 0)))/(1-exp(-k*(A2-0)))))^(1/g),
                                  start = start)) +
   scale_color_viridis_d() +
   labs(x = "Age (yr)", y= "Total length (mm)", color = "Year")+
@@ -282,3 +264,9 @@ akdat4 <- akdat2 %>%
             m_length = mean(length_cm), cv_length = sd_length/m_length)
 ggplot(akdat4, aes(x = age_adj, y = cv_length))+
   geom_point()
+
+akdat_plus <- akdat2 %>% 
+  filter(age_adj > 17) %>% 
+  group_by() %>% 
+  summarise(nages = length(length_cm), sd_length = sd(length_cm), 
+            m_length = mean(length_cm), cv_length = sd_length/m_length)

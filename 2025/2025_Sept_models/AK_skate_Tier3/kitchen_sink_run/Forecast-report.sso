@@ -1,7 +1,7 @@
 #V3.30.23.2;_safe;_compile_date:_
 Apr 17 2025
 ;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
-Tue Aug 12 13:59:16 2025
+Tue Aug 12 14:54:30 2025
 Bmark_relF(by_fleet_&seas) (excluding non-scaled bycatch fleets)
  0.00526179 0.994738 0
 #
@@ -16,7 +16,7 @@ YPR_mask for including catch:
 #V3.30.23.2;_safe;_compile_date:_
 Apr 17 2025
 ;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
-Tue Aug 12 13:59:16 2025
+Tue Aug 12 14:54:30 2025
 Bmark_relF(by_fleet_&seas) (excluding non-scaled bycatch fleets)
  0.00526179 0.994738 0
 #
@@ -104,7 +104,7 @@ seas fleet Hrate encB deadB retB encN deadN retN):
 #
 set_Fmsy=Fspr
 Iter Fmult ann_F SPR Catch SSB Recruits SSB/Bzero Gradient Curvature Tot_Ret_Catch Ret_Catch:1  Ret_Catch:2  Ret_Catch:3 Cost Revenue Profit  Area:1_GP:1
-1 0.0961743 0.0961743 0.4 20248.8 159761 29471.3 0.4  na  na 20248.8 93.3278 20155.5 0 0 20248.8 0  159761
+1 0.0961743 0.0961743 0.4 20248.8 159761 29471.3 0.4  na  na 20248.8 93.3279 20155.5 0 0 20248.8 0  159761
 #
 Management_report
 Steepness_Recr_SSB_virgin(R0) 1 29471.3 399401

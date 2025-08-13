@@ -244,9 +244,46 @@ run(dir = KS_mod_path, skipfinished = FALSE, exe = exe_loc)
 
 mrun14 <- SS_output(KS_mod_path, printstats = FALSE, verbose = FALSE)
 mrun14_out <- SS_output(dir = KS_mod_path, verbose = TRUE)
+mrun14_out$breakpoints_for_bias_adjustment_ramp
 
 # plots the results
 SS_plots(mrun14_out)
+
+# kitchen sink model with bias corrections----
+# see notes in 2025_AK_skate google doc
+KSbias_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_bias')
+run(dir = KSbias_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun15 <- SS_output(KSbias_mod_path, printstats = FALSE, verbose = FALSE)
+mrun15_out <- SS_output(dir = KSbias_mod_path, verbose = TRUE)
+mrun15_out$breakpoints_for_bias_adjustment_ramp
+
+# plots the results
+SS_plots(mrun15_out)
+
+# kitchen sink bias model ----
+KSbias_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_bias')
+run(dir = KSbias_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun15 <- SS_output(KSbias_mod_path, printstats = FALSE, verbose = FALSE)
+mrun15_out <- SS_output(dir = KSbias_mod_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun15_out)
+
+# Compare kitchen sinks ----
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
+                                     "kitchen_sink_run",
+                                     "kitchen_sink_bias"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/plot_kitchen_sink_compare')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('base', 'kitchen sink', 'kitchen sink bias'))
 
 
 

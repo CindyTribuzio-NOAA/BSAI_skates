@@ -271,6 +271,17 @@ mrun15_out <- SS_output(dir = KSbias_mod_path, verbose = TRUE)
 # plots the results
 SS_plots(mrun15_out)
 
+# kitchen sink short model ----
+# start year 1980 with bias correction
+KSshort_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_short')
+run(dir = KSshort_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+mrun16 <- SS_output(KSshort_mod_path, printstats = FALSE, verbose = FALSE)
+mrun16_out <- SS_output(dir = KSshort_mod_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mrun16_out)
+
 # Compare kitchen sinks ----
 datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
 setwd(datapath)

@@ -1,5 +1,5 @@
 # Breaking down the various component of the Kitchen Sink model
-# individual changes
+# individual changes, not sequentially building
 # developed by C Tribuzio August 2025
 
 # setup ----
@@ -27,7 +27,6 @@ SS_plots(M142_v_bias_out)
 # Model 14_2d + vers/bias and jitter/lamda----
 # jitter changed from 0.01 to 0.1 in starter file
 # #_maxlambdaphase from 4 to 1 in control file
-# sd_offset from 1 to 0 in control file
 M142_jitter <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/M14_2d_vb_jitter_lambda')
 
 r4ss::run(dir = M142_jitter, skipfinished = FALSE, exe = exe_loc)
@@ -36,3 +35,27 @@ M142_jitter_out <- SS_output(M142_jitter, printstats = FALSE, verbose = FALSE)
 
 # plots the results
 SS_plots(M142_jitter_out)
+
+# Model 14_2d + vers/bias and fixed growth----
+# Schnute growth params from AK_skate_Richards_growth analysis
+# cv_young and CV_old from AK_skate_Richards_growth analysis
+# sd_offset from 1 to 0 in control file
+M142_growth <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/M14_2d_vb_growth')
+
+r4ss::run(dir = M142_growth, skipfinished = FALSE, exe = exe_loc)
+
+M142_growth_out <- SS_output(M142_growth, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M142_growth_out)
+
+# Model 14_2d + vers/bias and fixed catchability----
+# Q = ln(0.836) as per Kotwicki and Weinberg 2005
+M142_q <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/M14_2d_vb_q')
+
+r4ss::run(dir = M142_q, skipfinished = FALSE, exe = exe_loc)
+
+M142_q_out <- SS_output(M142_q, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M142_q_out)

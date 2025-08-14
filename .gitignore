@@ -18,6 +18,9 @@ database.csv
 *.pptx
 *.Rdata
 
+# Don't track explorations_notused folders
+explorations_notused/
+
 # Don't track binary or fig files
 *.docx
 *.pptx

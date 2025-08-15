@@ -59,3 +59,26 @@ M142_q_out <- SS_output(M142_q, printstats = FALSE, verbose = FALSE)
 
 # plots the results
 SS_plots(M142_q_out)
+
+# Model 14_2d + vers/bias and fixed survey slx----
+# fixed at values from 2007 which were empirically derived from Kotwiki and Weinberg 2005
+M142_survslx <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/M14_2d_vb_fixsurveyslx')
+
+r4ss::run(dir = M142_survslx, skipfinished = FALSE, exe = exe_loc)
+
+M142_survslx_out <- SS_output(M142_survslx, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M142_survslx_out)
+
+# Model 14_2d + vers/bias and fixed top param fishery slx----
+# widened bounds on fishery selectivity
+# fixed top parameter at -6, when it's negative, the value doesn't matter?
+M142_fshslx <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/M14_2d_vb_fisheryslx')
+
+r4ss::run(dir = M142_fshslx, skipfinished = FALSE, exe = exe_loc)
+
+M142_fshslx_out <- SS_output(M142_fshslx, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M142_fshslx_out)

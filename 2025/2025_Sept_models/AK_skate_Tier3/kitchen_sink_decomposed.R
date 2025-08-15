@@ -82,3 +82,27 @@ M142_fshslx_out <- SS_output(M142_fshslx, printstats = FALSE, verbose = FALSE)
 
 # plots the results
 SS_plots(M142_fshslx_out)
+
+# Compare kitchen sinks ----
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
+                                     "M14_2d_vers_bias",
+                                     "M14_2d_vb_jitter_lambda",
+                                     "M14_2d_vb_growth",
+                                     "M14_2d_vb_q",
+                                     "M14_2d_vb_fixsurveyslx",
+                                     "M14_2d_vb_fisheryslx"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_decompose/plots_compare')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('base', 
+                                   'vers_bias',
+                                   'jitter_lambda',
+                                   'growth',
+                                   'q',
+                                   'survey_slx',
+                                   'fishery_slx'))

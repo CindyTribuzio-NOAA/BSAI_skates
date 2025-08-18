@@ -249,7 +249,7 @@ mrun14_out$breakpoints_for_bias_adjustment_ramp
 # plots the results
 SS_plots(mrun14_out)
 
-# kitchen sink model with bias corrections----
+# kitchen sink model with rec ramp corrections----
 # see notes in 2025_AK_skate google doc
 KSbias_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_bias')
 run(dir = KSbias_mod_path, skipfinished = FALSE, exe = exe_loc)
@@ -261,7 +261,7 @@ mrun15_out$breakpoints_for_bias_adjustment_ramp
 # plots the results
 SS_plots(mrun15_out)
 
-# kitchen sink bias model ----
+# kitchen sink rec ramp model ----
 KSbias_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_bias')
 run(dir = KSbias_mod_path, skipfinished = FALSE, exe = exe_loc)
 
@@ -271,8 +271,29 @@ mrun15_out <- SS_output(dir = KSbias_mod_path, verbose = TRUE)
 # plots the results
 SS_plots(mrun15_out)
 
+# kitchen sink changing slx ----
+# estimating the logistic survey selectivity
+KSslx_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_slx')
+run(dir = KSslx_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+#mKSslx <- SS_output(KSslx_mod_path, printstats = FALSE, verbose = FALSE)
+mKSslx_out <- SS_output(dir = KSslx_mod_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mKSslx_out)
+
+# kitchen sink changing survey slx back to double normal ----
+KSsurvslx_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_slx')
+run(dir = KSslx_mod_path, skipfinished = FALSE, exe = exe_loc)
+
+#mKSslx <- SS_output(KSslx_mod_path, printstats = FALSE, verbose = FALSE)
+mKSslx_out <- SS_output(dir = KSslx_mod_path, verbose = TRUE)
+
+# plots the results
+SS_plots(mKSslx_out)
+
 # kitchen sink short model ----
-# start year 1980 with bias correction
+# start year 1980 with rec ramp correction
 KSshort_mod_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/kitchen_sink_short')
 run(dir = KSshort_mod_path, skipfinished = FALSE, exe = exe_loc)
 
@@ -294,7 +315,7 @@ plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/plot_kitchen_
 SSplotComparisons(model_comp,
                   print = TRUE,
                   plotdir = here::here(plotpath),
-                  legendlabels = c('base', 'kitchen sink', 'kitchen sink bias'))
+                  legendlabels = c('base', 'kitchen sink', 'kitchen sink rec ramp'))
 
 
 

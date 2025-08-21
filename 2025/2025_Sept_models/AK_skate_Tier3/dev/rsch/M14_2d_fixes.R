@@ -49,11 +49,11 @@ run(dir = KSallslx_mod_path, skipfinished = FALSE, exe = exe_loc)
 mKSallslx_out <- SS_output(dir = KSallslx_mod_path, verbose = TRUE)
 
 # plots the results
-SS_plots(mKKSallslx_out)
+SS_plots(mKSallslx_out)
 
 
 # Compare kitchen sinks ----
-datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3")
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/Model_14_2d_fixes/")
 setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("base_M14_2d_fixedcatch", 
                                      "kitchen_sink_run",

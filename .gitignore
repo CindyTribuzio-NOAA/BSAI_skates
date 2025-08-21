@@ -78,8 +78,11 @@ variance
 CumReport.sso
 ParmTrace.sso
 ss.cor
+ss3.cor
 ss.rep
+ss3.rep
 ss.par
+ss3.par
 *.exe
 *.bat
 ignored

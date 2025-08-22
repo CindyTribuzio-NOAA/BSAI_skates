@@ -24,10 +24,6 @@ if(!isTRUE("r4ss" %in% rownames(installed.packages()))) {
 # load packages
 lapply(pkg_git, library, character.only = TRUE)
 
-## load functions ----
-source_files <- c(list.files(here::here('2025', '2025_Sept_models', 'AK_skate_Tier3', 'R'), pattern = "*.R$"))
-purrr::map(here::here('2025', '2025_Sept_models', 'AK_skate_Tier3', 'R', source_files), source)
-
 # read in data file ----
 dat <- r4ss::SS_readdat(here::here('2025', '2025_Sept_models', 'AK_skate_Tier3', 'rsch', 'Model_14_2d_fixes', 'kitchen_sink_allslx', dat_name), verbose = TRUE)
 

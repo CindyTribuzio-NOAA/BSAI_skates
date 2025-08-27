@@ -12,8 +12,8 @@
 # 1. accepted model dat file from previous assessment
 # 2. accepted model ctl file from previous assessment
 # 3. data_echo.ss_new file from accepted model
-old_dat_filename <- "GOAPcod2023Oct16.dat"
-old_ctl_filename <- "Model19_1b.ctl"
+old_dat_filename <- "data_aksk14_2_2023.ss"
+old_ctl_filename <- "control.ss_new"
 
 # run data queries? TRUE if first time running this script, or if data needs to be updated, FALSE for every run thereafter
 query = FALSE
@@ -66,7 +66,7 @@ lapply(pkg_git, library, character.only = TRUE)
 
 ## data file specs ----
 # current year ss3 dat filename
-new_dat_filename <- paste0("GOAPcod", 
+new_dat_filename <- paste0("EBSAKskt", 
                               format(Sys.Date(), format = "%Y%b%d"),
                               ".dat")
 
@@ -75,29 +75,28 @@ new_year <- as.numeric(format(Sys.Date(), format = "%Y"))
 
 ## comp data arguments ----
 # length bins to use for length comp data
-bin_width <- 1
-min_size <- 0.5
-max_size <- 104.5  # less than 1% of the fish in each year are 105 cm or larger (max less than 0.6%)
+bin_width <- 4
+min_size <- 4
+max_size <- 132
 len_bins <- seq(min_size, max_size, bin_width)
-len_bins5 <- c(4.5, 9.5, 14.5, 19.5, 24.5, 29.5, 34.5, 39.5, 44.5, 49.5, 54.5, 59.5, 64.5, 69.5, 74.5, 79.5, 84.5, 89.5, 94.5, 99.5, 104.5)
 
 # set up needed folders ----
 
 # Make folders for data queries, raw data, and model input files
-if (!file.exists(here::here(new_year, "data", "raw"))){
-  dir.create(here::here(new_year, "data", "raw"))
+if (!file.exists(here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "raw"))){
+  dir.create(here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "raw"))
 }
-if (!file.exists(here::here(new_year, "data", "output"))){
-  dir.create(here::here(new_year, "data", "output"))
+if (!file.exists(here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "output"))){
+  dir.create(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "data", "output"))
 }
-if (!file.exists(here::here(new_year, "data", "sql"))){
-  dir.create(here::here(new_year, "data", "sql"))
+if (!file.exists(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "data", "sql"))){
+  dir.create(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "data", "sql"))
 }
-if (!file.exists(here::here(new_year, "output", "mdl_input"))){
-  dir.create(here::here(new_year, "output", "mdl_input"))
+if (!file.exists(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "output", "mdl_input"))){
+  dir.create(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "output", "mdl_input"))
 }
-if (!file.exists(here::here(new_year, "output", "ageing_error"))){
-  dir.create(here::here(new_year, "output", "ageing_error"))
+if (!file.exists(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "output", "ageing_error"))){
+  dir.create(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "output", "ageing_error"))
 }
 
 # Remove previous dat files from output folder
@@ -111,27 +110,29 @@ if(isTRUE(remove_dat)){
 }
 
 # source functions ----
-source_files <- list.files(here::here(new_year, "R", "get_data"), "*.r$")
-purrr::map(here::here(new_year, "R", "get_data", source_files), source)
-source(here::here(new_year, "R", "utils.r"))
+source_files <- list.files(here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3',"R", "get_data"), "*.r$")
+purrr::map(here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3',"R", "get_data", source_files), source)
+source(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "R", "utils.r"))
+source(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "R", "get_data", 'query_survey_AKskate.R'))
+source(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "R", "get_data", 'query_fishery_AKskate.R'))
 
 # get ss3 data files ----
 
 # read in previous assessment ss3 datafile
-old_data <- r4ss::SS_readdat_3.30(here::here(new_year, "data", old_dat_filename))
+old_data <- r4ss::SS_readdat_3.30(here::here(new_year,'2025_Sept_models', 'AK_skate_Tier3', "data", old_dat_filename))
 
 # fix survey timing
-old_data$fleetinfo = old_data$fleetinfo %>% 
-  dplyr::mutate(surveytiming = dplyr::case_when(surveytiming == 1007 ~ 1,
-                                                .default = surveytiming))
-old_data$surveytiming[old_data$surveytiming == 1007] = 1
+# from Pcod code, doesn't do anything for skate file
+#old_data$fleetinfo = old_data$fleetinfo %>% 
+#  dplyr::mutate(surveytiming = dplyr::case_when(surveytiming == 1007 ~ 1,
+#                                                .default = surveytiming))
+#old_data$surveytiming[old_data$surveytiming == 1007] = 1
 
 ## file with all c series changes ----
-new_data <- get_data_goa_pcod(new_data = old_data,
+new_data <- query_ebssurv_akskt(new_data = old_data,
                               new_file = new_dat_filename,
                               new_year = new_year,
                               query = query,
-                              run_glm = run_glm,
                               len_bins = len_bins)
 r4ss::SS_writedat_3.30(new_data,
                        here::here(new_year, "output", "mdl_input", 

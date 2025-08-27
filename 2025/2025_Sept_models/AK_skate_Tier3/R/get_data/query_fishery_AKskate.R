@@ -85,10 +85,10 @@ dplyr::collect(akfin_len) %>%
                                         gear == 6 ~ 'pot',
                                         gear %in% c(5, 7, 9, 10, 11, 68, 8) ~ 'longline')) %>%  
   dplyr::filter(year <= new_year) %>% 
-  vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'fish_lfreq.csv'), delim = ",")
+  vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'fish_lfreq.csv'), delim = ",")
 
 capture.output(dplyr::show_query(akfin_len), 
-               file = here::here(new_year, '2025_Sept_models', "data", "sql", "fsh_lfreq_sql.txt"))
+               file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "fsh_lfreq_sql.txt"))
 # print message when done
 cat(crayon::green$bold("\u2713"), crayon::blue("fishery length query"), crayon::green$underline$bold$italic("DONE"), "\n")
 
@@ -113,10 +113,10 @@ dplyr::collect(akfin_obsc) %>%
                                         gear == 6 ~ 'pot',
                                         gear %in% c(5, 7, 9, 10, 11, 68, 8) ~ 'longline')) %>%  
   dplyr::filter(year <= new_year) %>% 
-  vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'fish_obs_catch.csv'), delim = ",")
+  vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'fish_obs_catch.csv'), delim = ",")
 
 capture.output(dplyr::show_query(akfin_obsc), 
-               file = here::here(new_year, '2025_Sept_models', "data", "sql", "fsh_obs_catch_sql.txt"))
+               file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "fsh_obs_catch_sql.txt"))
 # print message when done
 cat(crayon::green$bold("\u2713"), crayon::blue("fishery observer catch query"), crayon::green$underline$bold$italic("DONE"), "\n")
 

@@ -43,21 +43,45 @@ M25_0_out <- SS_output(M25_0_path, printstats = FALSE, verbose = FALSE)
 # plots the results
 SS_plots(M25_0_out)
 
+# Model 25_1----
+# fixed catchability
+M25_1_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/rsch/M25_1')
 
+r4ss::run(dir = M25_1_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_1_out <- SS_output(M25_1_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_1_out)
+
+# Model 25_2----
+# fixed starting point for slx, and widened some parameters, fixed ending pt for survey slx
+M25_2_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/rsch/M25_2')
+
+r4ss::run(dir = M25_2_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_2_out <- SS_output(M25_2_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_2_out)
 
 # Compare bridging models ----
-datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/2025_final_Sept_Models/")
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
 setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
-                                     "M14_2d_ss3version",
-                                     "M25_0_bias"))
+                                     "M14_2d1",
+                                     "M25_0",
+                                     "M25_1",
+                                     "M25_2"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 model_comp <- SSsummarize(bridge_out)
-plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/2025_final_Sept_Models/plots_compare')
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_compare')
 SSplotComparisons(model_comp,
                   print = TRUE,
                   plotdir = here::here(plotpath),
-                  legendlabels = c('base', 
-                                   'vers',
-                                   'bias'
+                  legendlabels = c('M14_2d', 
+                                   'M14_2d1',
+                                   'M25_0',
+                                   'M25_1',
+                                   'M25_2'
                                    ))

@@ -54,9 +54,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
     dplyr::mutate(area = case_when(strata == 99901 ~ 'ebs_shelf')) -> twl_q
   
   dplyr::collect(twl_q) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_index.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_index.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_index_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "twl_srvy_index_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey index query"), crayon::green$underline$bold$italic("DONE"), "\n")
   
@@ -86,9 +86,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
   dplyr::collect(twl_q) %>% 
     tidytable::filter(length > 0) %>% 
     tidytable::mutate(length = length / 10) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_lpop.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_lpop.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_lpop_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models','AK_skate_Tier3',  "data", "sql", "twl_srvy_lpop_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey length pop'n query"), crayon::green$underline$bold$italic("DONE"), "\n")
   
@@ -120,9 +120,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
   dplyr::collect(twl_q) %>% 
     tidytable::filter(age > 0) %>% 
     tidytable::mutate(mean_len = mean_len / 10) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_apop.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_apop.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_apop_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "twl_srvy_apop_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey age pop'n query"), crayon::green$underline$bold$italic("DONE"), "\n")
   
@@ -167,9 +167,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
     tidytable::filter(age > 0) %>% 
     tidytable::mutate(length = length / 10,
                       weight = weight / 1000) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_age.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_age.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_age_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "twl_srvy_age_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey age specimen query"), crayon::green$underline$bold$italic("DONE"), "\n")
   
@@ -238,9 +238,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
                   lon = longitude_dd_end) -> twl_q
   
   dplyr::collect(twl_q) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_haul.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_haul.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_haul_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "twl_srvy_haul_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey haul data query"), crayon::green$underline$bold$italic("DONE"), "\n")
   
@@ -275,9 +275,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
                   species_code) -> twl_q
   
   dplyr::collect(twl_q) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_catch.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_catch.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_catch_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "twl_srvy_catch_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey catch data query"), crayon::green$underline$bold$italic("DONE"), "\n")
   
@@ -320,9 +320,9 @@ query_ebssurv_akskt <- function(new_year = 9999,
                   frequency) -> twl_q
   
   dplyr::collect(twl_q) %>% 
-    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'data', 'raw', 'twl_srvy_lenfreq.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_lenfreq.csv'), delim = ",")
   capture.output(dplyr::show_query(twl_q), 
-                 file = here::here(new_year, '2025_Sept_models', "data", "sql", "twl_srvy_lenfreq_sql.txt"))
+                 file = here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', "data", "sql", "twl_srvy_lenfreq_sql.txt"))
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey length freq data query"), crayon::green$underline$bold$italic("DONE"), "\n")
 
@@ -360,7 +360,7 @@ query_ebssurv_akskt <- function(new_year = 9999,
                            tidytable::left_join(subreg) %>% 
                            tidytable::drop_na()) %>%
     tidytable::filter(design_year == max(design_year), .by = c(stratum)) %>% 
-    vroom::vroom_write(., here::here(new_year, 'data', 'raw', 'twl_srvy_strata.csv'), delim = ",")
+    vroom::vroom_write(., here::here(new_year, '2025_Sept_models', 'AK_skate_Tier3', 'data', 'raw', 'twl_srvy_strata.csv'), delim = ",")
   # print message when done
   cat(crayon::green$bold("\u2713"), crayon::blue("trawl survey strata data query"), crayon::green$underline$bold$italic("DONE"), "\n")
 

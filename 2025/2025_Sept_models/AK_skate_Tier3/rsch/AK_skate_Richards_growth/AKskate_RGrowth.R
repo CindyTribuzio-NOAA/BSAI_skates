@@ -34,10 +34,10 @@ AKskt_dat <- sqlQuery(channel_akfin, query = ("
          length_cm = length_mm/10)
 
 #data were compared to a direct pull from the AGP database and everything matches
-write_csv(AKskt_dat, paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth/AKskate_gap_ages.csv'))
+write_csv(AKskt_dat, paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/AK_skate_Richards_growth/AKskate_gap_ages.csv'))
 
 #read in the data if skipping the query step above
-AKskt_dat <- read_csv(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth/AKskate_gap_ages.csv'))
+AKskt_dat <- read_csv(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/AK_skate_Richards_growth/AKskate_gap_ages.csv'))
 
 #clean up the data and prep for analyses
 AKskt_dat <- AKskt_dat %>% 
@@ -51,11 +51,11 @@ nyr <- AKskt_dat %>%
 #NOTE: there are about 350 fishery samples available, however, they are from different months as the survey samples, excluded for now
 # see folder: AGP_Matta_data for fishery data
 
-surv2003 <- read_excel(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth/AGP_Matta_data/2003survey_AKskate_specimen data.xlsx')) %>% 
+surv2003 <- read_excel(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/AK_skate_Richards_growth/AGP_Matta_data/2003survey_AKskate_specimen data.xlsx')) %>% 
   clean_names() %>% 
   mutate(specimen_id = as.numeric(gsub( "*.-", "", specimen))) %>% 
   filter(final_age != -9)
-surv2004 <- read_excel(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/AK_skate_Richards_growth/AGP_Matta_data/2004survey_AKskate_specimen data.xlsx')) %>% 
+surv2004 <- read_excel(paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/AK_skate_Richards_growth/AGP_Matta_data/2004survey_AKskate_specimen data.xlsx')) %>% 
   clean_names() %>% 
   mutate(specimen_id = as.numeric(gsub( "*.-", "", specimen))) %>% 
   filter(final_age != -9)
@@ -71,15 +71,17 @@ surv_ages <- surv2003 %>%
   select(c('cruisejoin', 'haul_year', 'yrmday', 'specimen_id', 'species_code', 'length_cm', 'sex', 'weight_g', 'age', 'maturity' ))
 
 akdat2 <- AKskt_dat %>% 
-  bind_rows(surv_ages)
+  bind_rows(surv_ages) %>% 
+  mutate(adj = yday(yrmday)/365, #adjusts the date, SS3 estimates growth at the first of the year, but our ages are from different dates
+         age_adj = age + adj)
 
 # adjust date----
-# SS3 estimates growth at the first of the year, but our ages are from July. For the model, use 
+#  July. For the model, use 
 # Jul 15 which is 196th day of 365 day year
-adj <- yday("2025-07-15 12:00:00 UTC")/365
+#adj <- yday("2025-07-15 12:00:00 UTC")/365
 
-akdat2 <- akdat2 %>% 
-  mutate(age_adj = age + adj)
+#akdat2 <- akdat2 %>% 
+#  mutate(age_adj = age + adj)
 
 # Schnute/Richards growth model----
 # matches formulation in SS3, see user manuals: https://github.com/nmfs-ost/ss3-doc/releases
@@ -101,22 +103,23 @@ fitpm1 <- as.data.frame(coef(fitm1))
 
 # Approxmate Gompertz growth----
 # fix g = 0 approximates the Gompertz growth function
-start <- list(L0=15, Linf=120, k=0.2)
-lower <- list(L0=0.1, Linf=0.1, k=1e-6)
-upper <- list(L0=Inf, Linf=Inf, k=5)
-A1 <- 0
-A2 <- 15 #not sufficient data to estimate A2, informed by mean size at age
-g <- 0.0001
-m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age_adj - A1)))/(1-exp(-k*(A2-A1)))))^(1/g)
-fitm1 <- nls(m1, 
-             data = akdat2, 
-             start = start,
-             algorithm = 'port',
-             lower = lower,
-             upper = upper)
-summary(fitm1)
-confint(fitm1)
-fitpm1 <- as.data.frame(coef(fitm1))
+# fails to converge
+#start <- list(L0=15, Linf=120, k=0.2)
+#lower <- list(L0=0.1, Linf=0.1, k=1e-6)
+#upper <- list(L0=Inf, Linf=Inf, k=5)
+#A1 <- 0
+#A2 <- 15 #not sufficient data to estimate A2, informed by mean size at age
+#g <- 0.0001
+#m1 <- akdat2$length_cm ~ (L0^g + (Linf^g - L0^g)* ((1-exp(-k*(akdat2$age_adj - A1)))/(1-exp(-k*(A2-A1)))))^(1/g)
+#fitm1 <- nls(m1, 
+#             data = akdat2, 
+#             start = start,
+#             algorithm = 'port',
+#             lower = lower,
+#             upper = upper)
+#summary(fitm1)
+#confint(fitm1)
+#fitpm1 <- as.data.frame(coef(fitm1))
 
 #calculate A2 to feed back into model
 #A2dat <- akdat2 %>% 
@@ -228,14 +231,18 @@ estL14_2bnd <- (23.8197^-4.13049 + (100.608^-4.13049 - 23.8197^-4.13049)* ((1-ex
 modest14_2bnd <- bind_cols(age_adj, estL14_2bnd)
 names(modest14_2bnd) <- c('age_adj', 'length_cm')
 
-ggplot(akdat2, aes(x= age_adj, y=length_cm))+
+#growth fit comparison plot----
+AKskt_growthfit <- ggplot(akdat2, aes(x= age_adj, y=length_cm))+
   geom_point(alpha = 0.25)+
   geom_line(data = modestm1, aes(x = age_adj, y = length_cm), color = 'red', linetype = 'dashed', lwd = 2)+
   geom_line(data = modestm2, aes(x = age_adj, y = length_cm), color = 'green', lwd = 1.5)+
-  #geom_line(data = modest14_2, aes(x = age_adj, y = length_cm), color = 'blue', lwd = 1.5)+
+  geom_line(data = modest14_2, aes(x = age_adj, y = length_cm), color = 'blue', lwd = 1.5)+
   #geom_line(data = modest14_2bnd, aes(x = age_adj, y = length_cm), color = 'purple', lwd = 1.5)+
   labs(x = "Age (yr)", y= "Total length (cm)")+
   theme_bw()
+
+ggsave(path = paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/AK_skate_Richards_growth"),
+       "AKskt_fitgrowth.png",plot = AKskt_growthfit,dpi=600,width = 8, height = 8)
 
 # mean length at age_adj-----
 # direct comparison of growth parameters to data going into the model

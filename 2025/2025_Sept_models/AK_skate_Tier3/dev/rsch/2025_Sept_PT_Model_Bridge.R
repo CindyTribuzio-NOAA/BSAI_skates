@@ -85,3 +85,31 @@ SSplotComparisons(model_comp,
                                    'M25_1',
                                    'M25_2'
                                    ))
+
+# Model 25_3----
+# Model 25_0, but with mucking about with the selectivities
+M25_3_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/rsch/M25_3')
+
+r4ss::run(dir = M25_3_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_3_out <- SS_output(M25_3_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_3_out)
+
+# Compare bridging models with 25_3 ----
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
+                                     "M25_2",
+                                     "M25_3"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_extra')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('M14_2d', 
+                                   'M25_2',
+                                   'M25_3'
+                  ))

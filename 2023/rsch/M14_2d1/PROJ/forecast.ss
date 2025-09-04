@@ -51,7 +51,7 @@
 # list sequentially because read values fill to end of N forecast
 # terminate with -9999 in year field 
 # no allocation groups
-0 # basis for input Fcast catch: -1=read basis with each obs; 2=dead catch; 3=retained catch; 99=input apical_F; NOTE: bio vs num based on fleet's catchunits
+2 # basis for input Fcast catch: -1=read basis with each obs; 2=dead catch; 3=retained catch; 99=input apical_F; NOTE: bio vs num based on fleet's catchunits
 #enter list of Fcast catches or Fa; terminate with line having year=-9999
 #_Yr Seas Fleet Catch(or_F)
 -9999 1 1 0 

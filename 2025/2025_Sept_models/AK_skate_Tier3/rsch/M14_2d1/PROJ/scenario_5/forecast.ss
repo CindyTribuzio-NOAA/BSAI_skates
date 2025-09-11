@@ -1,5 +1,5 @@
 #C file created using an r4ss function
-#C file write time: 2025-09-09  12:07:03
+#C file write time: 2025-09-11  13:36:36
 #
 1 #_benchmarks
 1 #_MSY
@@ -8,15 +8,15 @@
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
 1977 0 1977 0 1977 0 1977 0 1977 0
 1 #_Bmark_relF_Basis
-4 #_Forecast
+1 #_Forecast
 15 #_Nforecastyrs
 0 #_F_scalar
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)
-0 0 2018 2022 -999 0
+0 0 0 0 -999 0
 0 #_Fcast_selex
 2 #_ControlRuleMethod
-0.001 #_BforconstantF
-1e-04 #_BfornoF
+0.4 #_BforconstantF
+0.02 #_BfornoF
 1 #_Flimitfraction
 3 #_N_forecast_loops
 3 #_First_forecast_loop_with_stochastic_recruitment
@@ -38,6 +38,52 @@
 # enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999
 -9999 -1
 2 #_InputBasis
+   #_ NA NA NA
+ 2024  1  1  0
+ 2025  1  1  0
+ 2026  1  1  0
+ 2027  1  1  0
+ 2028  1  1  0
+ 2029  1  1  0
+ 2030  1  1  0
+ 2031  1  1  0
+ 2032  1  1  0
+ 2033  1  1  0
+ 2034  1  1  0
+ 2035  1  1  0
+ 2036  1  1  0
+ 2037  1  1  0
+ 2038  1  1  0
+ 2024  1  2  0
+ 2025  1  2  0
+ 2026  1  2  0
+ 2027  1  2  0
+ 2028  1  2  0
+ 2029  1  2  0
+ 2030  1  2  0
+ 2031  1  2  0
+ 2032  1  2  0
+ 2033  1  2  0
+ 2034  1  2  0
+ 2035  1  2  0
+ 2036  1  2  0
+ 2037  1  2  0
+ 2038  1  2  0
+ 2024  1  3  0
+ 2025  1  3  0
+ 2026  1  3  0
+ 2027  1  3  0
+ 2028  1  3  0
+ 2029  1  3  0
+ 2030  1  3  0
+ 2031  1  3  0
+ 2032  1  3  0
+ 2033  1  3  0
+ 2034  1  3  0
+ 2035  1  3  0
+ 2036  1  3  0
+ 2037  1  3  0
+ 2038  1  3  0
 -9999 0 0 0
 #
 999 # verify end of input 

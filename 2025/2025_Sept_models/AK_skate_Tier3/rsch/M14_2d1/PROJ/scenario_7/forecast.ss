@@ -1,22 +1,22 @@
 #C file created using an r4ss function
-#C file write time: 2025-09-09  12:07:03
+#C file write time: 2025-09-11  13:36:38
 #
 1 #_benchmarks
 1 #_MSY
-0.4 #_SPRtarget
-0.4 #_Btarget
+0.35 #_SPRtarget
+0.35 #_Btarget
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
 1977 0 1977 0 1977 0 1977 0 1977 0
 1 #_Bmark_relF_Basis
-4 #_Forecast
+1 #_Forecast
 15 #_Nforecastyrs
 0 #_F_scalar
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)
-0 0 2018 2022 -999 0
+0 0 0 0 -999 0
 0 #_Fcast_selex
 2 #_ControlRuleMethod
-0.001 #_BforconstantF
-1e-04 #_BfornoF
+0.4 #_BforconstantF
+0.02 #_BfornoF
 1 #_Flimitfraction
 3 #_N_forecast_loops
 3 #_First_forecast_loop_with_stochastic_recruitment
@@ -38,6 +38,13 @@
 # enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999
 -9999 -1
 2 #_InputBasis
+ #_#Year Seas Fleet  dead(B)                 comment
+    2023    1     1    15.00     #sum_for_2023: 2935
+    2023    1     2  2920.00                        
+    2024    1     1   147.38 #sum_for_2024: 28971.78
+    2024    1     2 28824.40                        
+    2025    1     1   137.85 #sum_for_2025: 27256.25
+    2025    1     2 27118.40                        
 -9999 0 0 0
 #
 999 # verify end of input 

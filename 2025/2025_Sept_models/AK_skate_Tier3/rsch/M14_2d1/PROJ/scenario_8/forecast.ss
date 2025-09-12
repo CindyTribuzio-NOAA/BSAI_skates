@@ -1,5 +1,5 @@
 #C file created using an r4ss function
-#C file write time: 2025-09-11  13:36:38
+#C file write time: 2025-09-11  16:02:16
 #
 1 #_benchmarks
 1 #_MSY
@@ -41,8 +41,8 @@
  #_#Year Seas Fleet  dead(B)                 comment
     2023    1     1    15.00     #sum_for_2023: 2935
     2023    1     2  2920.00                        
-    2024    1     1   147.38 #sum_for_2024: 28971.78
-    2024    1     2 28824.40                        
+    2024    1     1   162.31 #sum_for_2024: 31950.81
+    2024    1     2 31788.50                        
 -9999 0 0 0
 #
 999 # verify end of input 

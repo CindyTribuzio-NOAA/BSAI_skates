@@ -20,6 +20,11 @@ exe_loc <- here::here('2025/2025_Sept_models/AK_skate_Tier3/ss.exe')
 # Model 14_2d----
 # Previously accepted model, but didn't converge
 M14_2d_path <- here::here('2025/2025_Sept_models/AK_skate_Tier3/rsch/M14_2d')
+M14_2d_out <- SS_output(M14_2d_path, printstats = FALSE, verbose = FALSE)
+
+M14_2d_survfit <- M14_2d_out$cpue
+M14_2d_survfit <- M14_2d_survfit %>% 
+  mutate(Model = 'M14_2d')
 
 # Model 14_2d1----
 # base model with version update and recruitment ramp corrections
@@ -62,6 +67,10 @@ r4ss::run(dir = M25_2_path, skipfinished = FALSE, exe = exe_loc)
 
 M25_2_out <- SS_output(M25_2_path, printstats = FALSE, verbose = FALSE)
 
+M25_2_survfit <- M25_2_out$cpue
+M25_2_survfit <- M25_2_survfit %>% 
+  mutate(Model = 'M25_2')
+
 # plots the results
 SS_plots(M25_2_out)
 
@@ -94,6 +103,11 @@ r4ss::run(dir = M25_3_path, skipfinished = FALSE, exe = exe_loc)
 
 M25_3_out <- SS_output(M25_3_path, printstats = FALSE, verbose = FALSE)
 
+M25_3_survfit <- M25_3_out$cpue
+M25_3_survfit <- M25_3_survfit %>% 
+  mutate(Model = 'M25_3')
+
+
 # plots the results
 SS_plots(M25_3_out)
 
@@ -112,4 +126,109 @@ SSplotComparisons(model_comp,
                   legendlabels = c('M14_2d', 
                                    'M25_2',
                                    'M25_3'
+                  ))
+
+#output data for comparisons----
+model_survfits <- M25_2_survfit %>% 
+  bind_rows(M25_3_survfit, M14_2d_survfit)
+
+write_csv(model_survfits, paste0(dat_path, "/Tier3_AKskt_survfits.csv"))
+
+
+# Bridging model sequential builds ----
+# 14_2d to 14_2d1
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
+                                     "M14_2d1"
+                                     ))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_compare/buildup14_2d1')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('M14_2d', 
+                                   'M14_2d1'
+                  ))
+
+# 14_2d to 25_0
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
+                                     "M14_2d1",
+                                     "M25_0"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_compare/buildup25_0')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('M14_2d', 
+                                   'M14_2d1',
+                                   'M25_0'
+                  ))
+
+# 14_2d to 25_1
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
+                                     "M14_2d1",
+                                     "M25_0",
+                                     "M25_1"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_compare/buildup25_1')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('M14_2d', 
+                                   'M14_2d1',
+                                   'M25_0',
+                                   'M25_1'
+                  ))
+
+# 14_2d to 25_2
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
+                                     "M14_2d1",
+                                     "M25_0",
+                                     "M25_1",
+                                     "M25_2"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_compare/buildup25_2')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('M14_2d', 
+                                   'M14_2d1',
+                                   'M25_0',
+                                   'M25_1',
+                                   'M25_2'
+                  ))
+
+# 14_2d to 25_3
+datapath <- paste0(getwd(), "/2025/2025_Sept_models/AK_skate_Tier3/rsch/")
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
+                                     "M14_2d1",
+                                     "M25_0",
+                                     "M25_1",
+                                     "M25_2",
+                                     "M25_3"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- paste0(getwd(), '/2025/2025_Sept_models/AK_skate_Tier3/rsch/bridge_plots_compare/buildup25_3')
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c('M14_2d', 
+                                   'M14_2d1',
+                                   'M25_0',
+                                   'M25_1',
+                                   'M25_2',
+                                   'M25_3'
+                                   
                   ))

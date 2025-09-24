@@ -208,29 +208,29 @@ data_inputs <- list(#mat_a50 = 15.280, #Matta MS thesis
 
 #placeholder values for now
 # this curve highly influences results!
-selexF <- c(seq(0.5, 1, 0.25), rep(1, 13), rev(seq(0.5, 1, 0.05))) # results in low F rates
-length(selexF) #nages = 27 (max age plus 1 for age 0)
-plot(selexF) #Goal is for a reasonable dome shaped curve
+#selexF <- c(seq(0.5, 1, 0.25), rep(1, 13), rev(seq(0.5, 1, 0.05))) # results in low F rates
+#length(selexF) #nages = 27 (max age plus 1 for age 0)
+#plot(selexF) #Goal is for a reasonable dome shaped curve
 
 selexF <- c(seq(0.1, 1, 0.2), rep(1, 16), rev(seq(0.5, 1, 0.1)))
 length(selexF)
 plot(selexF) #Goal is for a reasonable dome shaped curve
 
-selexF <- c(seq(0.1, 1, 0.2), rep(1, 22)) #ramp up and fully selected for whole age range, not a huge diff in F rates from the above, not a lot of large animals
-length(selexF)
-plot(selexF)
+#selexF <- c(seq(0.1, 1, 0.2), rep(1, 22)) #ramp up and fully selected for whole age range, not a huge diff in F rates from the above, not a lot of large animals
+#length(selexF)
+#plot(selexF)
 
-selexF <- c(rep(0.1, data_inputs$selex_dat1), rep(1, data_inputs$Amax-data_inputs$selex_dat1+1)) #knife edge
-length(selexF)
-plot(selexF)
+#selexF <- c(rep(0.1, data_inputs$selex_dat1), rep(1, data_inputs$Amax-data_inputs$selex_dat1+1)) #knife edge
+#length(selexF)
+#plot(selexF)
 
-selexF <- c(rep(1, data_inputs$Amax+1)) #fully selected at all age classes
-length(selexF)
-plot(selexF)
+#selexF <- c(rep(1, data_inputs$Amax+1)) #fully selected at all age classes
+#length(selexF)
+#plot(selexF)
 
-selexF <- c(rep(0.1, data_inputs$selex_dat1), rep(1, 15), rep(0.75, 7)) #knife edge
-length(selexF)
-plot(selexF)
+#selexF <- c(rep(0.1, data_inputs$selex_dat1), rep(1, 15), rep(0.75, 7)) #knife edge
+#length(selexF)
+#plot(selexF)
 
 # maturity curve set up
 # ignoring the built in function and making curve based on Matta MS Thesis
@@ -280,3 +280,4 @@ T4recs <- AKsk_rema %>%
   mutate(FOFL = res$F35,
          FABC = res$F40,
          model_name = "Tier 4")
+

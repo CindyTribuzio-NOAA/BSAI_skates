@@ -49,9 +49,15 @@ endramp <- seq(srdnval, erdnval, (erdnval - srdnval)/(erdnage-srdnage))
 topwidth <- (srdnage - erupage)-1
 selexF <- c(startramp, rep(1, topwidth), endramp)
 length(selexF)
-plot(selexF) 
+ageselex <- selexF %>% 
+  bind_cols(0:26)
+colnames(ageselex) <- c('Proportion', 'Age')
+ggplot(ageselex, aes(x = Age, y = Proportion))+
+  geom_point()+
+  geom_line()+
+  theme_bw()
 
-# maturity curve set up
+# theme_bw()# maturity curve set up
 # ignoring the built in function and making curve based on Matta MS Thesis
 ages <- 0:26
 mata_fem <- -15.280

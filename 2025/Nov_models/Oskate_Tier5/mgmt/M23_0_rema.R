@@ -10,6 +10,10 @@ lapply(libs, library, character.only = TRUE)
 '%nin%'<-Negate('%in%') #this is a handy function
 
 # folder set up
+AYR <- 2025
+pYEAR <- 2025
+SYR <- 2025
+
 dat_path <- here::here(AYR, 'Nov_models', 'Oskate_Tier5', 'data'); dir.create(dat_path)
 out_path <- here::here(AYR, 'Nov_models', 'Oskate_Tier5', 'mgmt'); dir.create(out_path)
 
@@ -17,8 +21,7 @@ ggplot2::theme_set(cowplot::theme_cowplot(font_size = 13) +
                      cowplot::background_grid() +
                      cowplot::panel_border())
 
-pYEAR <- 2025
-SYR <- 2025
+
 
 # Get Data ----
 sk_group <- read_csv(here::here(dat_path, 'BSAIskate_species_codes.csv')) %>% 
@@ -117,7 +120,7 @@ AI_dat<- biomass_dat %>%
 #Prep EBS shelf----
 # excludes Alaska skate
 EBS_dat <- biomass_dat %>% 
-  filter(species_name != "Alaska skate",
+  filter(common_name != "Alaska skate",
          year >= 1999,
          survey == 98) %>% 
   group_by(year) %>% 
@@ -159,38 +162,38 @@ Slope_input <- prepare_rema_input(model_name = 'M23_EBSslope',
                                 PE_options = list(pointer_PE_biomass = c(1)))
 
 # fit rema models ----
-m20_EBS <- fit_rema(EBS_input)
-m20_EBS_out <- tidy_rema(m20_EBS)
+m23_EBS <- fit_rema(EBS_input)
+m23_EBS_out <- tidy_rema(m23_EBS)
 
-m20_AI <- fit_rema(AI_input)
-m20_AI_out <- tidy_rema(m20_AI)
+m23_AI <- fit_rema(AI_input)
+m23_AI_out <- tidy_rema(m23_AI)
 
-m20_Slope <- fit_rema(Slope_input)
-m20_Slope_out <- tidy_rema(m20_Slope)
+m23_Slope <- fit_rema(Slope_input)
+m23_Slope_out <- tidy_rema(m23_Slope)
 
 # plot and clean up output ----
-m20_EBS_plots <- plot_rema(tidy_rema = m20_EBS_out)
-m20_AI_plots <- plot_rema(tidy_rema = m20_AI_out)
-m20_Slope_plots <- plot_rema(tidy_rema = m20_Slope_out)
+m23_EBS_plots <- plot_rema(tidy_rema = m23_EBS_out)
+m23_AI_plots <- plot_rema(tidy_rema = m23_AI_out)
+m23_Slope_plots <- plot_rema(tidy_rema = m23_Slope_out)
 
-m20_EBS_tot <- tidy_rema(m20_EBS)$biomass_by_strata %>% 
+m23_EBS_tot <- tidy_rema(m23_EBS)$biomass_by_strata %>% 
   select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
 
-m20_AI_tot <- tidy_rema(m20_AI)$biomass_by_strata %>% 
+m23_AI_tot <- tidy_rema(m23_AI)$biomass_by_strata %>% 
   select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
 
-m20_Slope_tot <- tidy_rema(m20_Slope)$biomass_by_strata %>% 
+m23_Slope_tot <- tidy_rema(m23_Slope)$biomass_by_strata %>% 
   select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
 
-T5_m20_output <- m20_EBS_tot %>% 
-  bind_rows(m20_AI_tot, m20_Slope_tot)
+T5_m23_output <- m23_EBS_tot %>% 
+  bind_rows(m23_AI_tot, m23_Slope_tot)
 
-write_csv(T5_m20_output, paste0(out_path, "/Tier5_m20_output.csv"))
+write_csv(T5_m23_output, paste0(out_path, "/Tier5_m23_output.csv"))
 
 # make nice summary graph ----
-T5_m20_output <- read_csv(paste0(out_path, "/Tier5_m20_output.csv"))
+T5_m23_output <- read_csv(paste0(out_path, "/Tier5_m23_output.csv"))
 
-plot_M23 <- ggplot(data = T5_m20_output,
+plot_M23 <- ggplot(data = T5_m23_output,
        aes(x = year, y = pred,
            col = model_name)) +
   geom_ribbon(aes(ymin = pred_lci, ymax = pred_uci,
@@ -210,7 +213,7 @@ ggsave(path = out_path,
        "M23_biomass.png",plot=plot_M23,dpi=600,width = 6, height = 8)
 
 # Tier 5 harvest recommendations ----
-SurvBiom <- T5_m20_output %>% 
+SurvBiom <- T5_m23_output %>% 
   group_by(year) %>% 
   summarise(rbiom = sum(pred),
             OFL = rbiom * 0.1,
@@ -261,58 +264,58 @@ Slopespec_dat <- biomass_dat %>%
   filter(!is.na(strata))
 
 # prep data for rema  ----
-EBSspec_input <- prepare_rema_input(model_name = 'M20_EBSshelf_spec',
+EBSspec_input <- prepare_rema_input(model_name = 'M23_EBSshelf_spec',
                                 biomass_dat = EBSspec_dat,
                                 end_year = pYEAR,
                                 zeros = list(assumption = "NA"),
                                 PE_options = list(pointer_PE_biomass = c(1, 1, 1, 1, 1)))
-AIspec_input <- prepare_rema_input(model_name = 'M20_AIspec',
+AIspec_input <- prepare_rema_input(model_name = 'M23_AIspec',
                                biomass_dat = AIspec_dat,
                                end_year = pYEAR,
                                zeros = list(assumption = "NA"),
                                PE_options = list(pointer_PE_biomass = c(1, 1, 1, 1, 1, 1, 1)))
-Slopespec_input <- prepare_rema_input(model_name = 'M20_EBSslope_spec',
+Slopespec_input <- prepare_rema_input(model_name = 'M23_EBSslope_spec',
                                   biomass_dat = Slopespec_dat,
                                   end_year = pYEAR,
                                   zeros = list(assumption = "NA"),
                                   PE_options = list(pointer_PE_biomass = c(1, 1, 1, 1, 1, 1, 1, 1, 1)))
 
 # fit rema models ----
-m20_EBSspec <- fit_rema(EBSspec_input)
-m20_EBSspec_out <- tidy_rema(m20_EBSspec)
+m23_EBSspec <- fit_rema(EBSspec_input)
+m23_EBSspec_out <- tidy_rema(m23_EBSspec)
 
-m20_AIspec <- fit_rema(AIspec_input)
-m20_AIspec_out <- tidy_rema(m20_AIspec)
+m23_AIspec <- fit_rema(AIspec_input)
+m23_AIspec_out <- tidy_rema(m23_AIspec)
 
-m20_Slopespec <- fit_rema(Slopespec_input)
-m20_Slopespec_out <- tidy_rema(m20_Slopespec)
+m23_Slopespec <- fit_rema(Slopespec_input)
+m23_Slopespec_out <- tidy_rema(m23_Slopespec)
 
 # plot and clean up output ----
-m20_EBSspec_plots <- plot_rema(tidy_rema = m20_EBSspec_out)
-m20_AIspec_plots <- plot_rema(tidy_rema = m20_AIspec_out)
-m20_Slopespec_plots <- plot_rema(tidy_rema = m20_Slopespec_out)
+m23_EBSspec_plots <- plot_rema(tidy_rema = m23_EBSspec_out)
+m23_AIspec_plots <- plot_rema(tidy_rema = m23_AIspec_out)
+m23_Slopespec_plots <- plot_rema(tidy_rema = m23_Slopespec_out)
 
-m20_EBSspec_tot <- tidy_rema(m20_EBSspec)$biomass_by_strata %>% 
+m23_EBSspec_tot <- tidy_rema(m23_EBSspec)$biomass_by_strata %>% 
   select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
 
-m20_AIspec_tot <- tidy_rema(m20_AIspec)$biomass_by_strata %>% 
+m23_AIspec_tot <- tidy_rema(m23_AIspec)$biomass_by_strata %>% 
   select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
 
-m20_Slopespec_tot <- tidy_rema(m20_Slopespec)$biomass_by_strata %>% 
+m23_Slopespec_tot <- tidy_rema(m23_Slopespec)$biomass_by_strata %>% 
   select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
 
-Species_m20_output <- m20_EBSspec_tot %>% 
-  bind_rows(m20_AIspec_tot, m20_Slopespec_tot)
+Species_m23_output <- m23_EBSspec_tot %>% 
+  bind_rows(m23_AIspec_tot, m23_Slopespec_tot)
 
-write_csv(Species_m20_output, paste0(out_path, "/Appendix_SpeciesSpecific_rema_output.csv"))
+write_csv(Species_m23_output, paste0(out_path, "/Appendix_SpeciesSpecific_rema_output.csv"))
 
 # makes species specific summary plots----
 # make nice summary graph ----
-Species_m20_output <- read_csv(paste0(out_path, "/Appendix_SpeciesSpecific_rema_output.csv")) %>% 
-  mutate(Survey = if_else(model_name == 'M20_AIspec', "AI",
-                          if_else(model_name == 'M20_EBSshelf_spec', "Shelf", "Slope")))
+Species_m23_output <- read_csv(paste0(out_path, "/Appendix_SpeciesSpecific_rema_output.csv")) %>% 
+  mutate(Survey = if_else(model_name == 'M23_AIspec', "AI",
+                          if_else(model_name == 'M23_EBSshelf_spec', "Shelf", "Slope")))
 
-AIspec_plot <- ggplot(data = Species_m20_output[Species_m20_output$Survey == 'AI',],
+AIspec_plot <- ggplot(data = Species_m23_output[Species_m23_output$Survey == 'AI',],
        aes(x = year, y = pred,
            col = model_name)) +
   geom_ribbon(aes(ymin = pred_lci, ymax = pred_uci,
@@ -331,7 +334,7 @@ AIspec_plot <- ggplot(data = Species_m20_output[Species_m20_output$Survey == 'AI
 ggsave(path = out_path, "Appendix_AIrema.png",plot=AIspec_plot,dpi=600,width = 6, height = 8)
 
 bcolors <- viridis(n=3)
-Shelfspec_plot <- ggplot(data = Species_m20_output[Species_m20_output$Survey == 'Shelf',],
+Shelfspec_plot <- ggplot(data = Species_m23_output[Species_m23_output$Survey == 'Shelf',],
                       aes(x = year, y = pred,
                           col = model_name)) +
   geom_ribbon(aes(ymin = pred_lci, ymax = pred_uci,
@@ -347,7 +350,7 @@ Shelfspec_plot <- ggplot(data = Species_m20_output[Species_m20_output$Survey == 
 
 ggsave(path = out_path, "Appendix_EBSshelfrema.png",plot=Shelfspec_plot,dpi=600,width = 6, height = 8)
 
-Slopespec_plot <- ggplot(data = Species_m20_output[Species_m20_output$Survey == 'Slope',],
+Slopespec_plot <- ggplot(data = Species_m23_output[Species_m23_output$Survey == 'Slope',],
                          aes(x = year, y = pred,
                              col = model_name)) +
   geom_ribbon(aes(ymin = pred_lci, ymax = pred_uci,
@@ -363,3 +366,46 @@ Slopespec_plot <- ggplot(data = Species_m20_output[Species_m20_output$Survey == 
 
 ggsave(path = out_path, "Appendix_EBSsloperema.png",plot=Slopespec_plot,dpi=600,width = 6, height = 8)
 
+# NBS rema----
+#NBS shelf Survey for Alaska skate
+NBS_dat <- read_csv(here::here(AYR, 'Nov_models', 'AK_skate_Tier5', 'data', paste0('AK_skate_GAPbiomass_', SYR, '.csv'))) %>% 
+  filter(common_name == "Alaska skate",
+         year >= 1999,
+         survey == 143) %>% 
+  mutate(strata = 'NBS') 
+
+# prep data for rema  ----
+NBS_input <- prepare_rema_input(model_name = 'AKskate_NBS',
+                                biomass_dat = NBS_dat,
+                                end_year = pYEAR,
+                                zeros = list(assumption = "NA"),
+                                PE_options = list(pointer_PE_biomass = c(1)))
+
+# fit rema models ----
+m_AKsktNBS <- fit_rema(NBS_input)
+m_AKsktNBS_out <- tidy_rema(m_AKsktNBS)
+
+# plot and clean up output ----
+#note: need to save plots individually, not part of output code
+m_AKsktNBS_plots <- plot_rema(tidy_rema = m_AKsktNBS_out)
+
+m_AKsktNBS_tot <- tidy_rema(m_AKsktNBS)$biomass_by_strata %>% 
+  select(strata, model_name, strata, year, variable, pred, pred_lci, pred_uci, obs, obs_cv, obs_lci, obs_uci) 
+
+bcolors <- viridis(n=5)
+NBS_plot <- ggplot(data = m_AKsktNBS_tot,
+                   aes(x = year, y = pred,
+                       col = model_name)) +
+  geom_ribbon(aes(ymin = pred_lci, ymax = pred_uci,
+                  fill = model_name), col = NA,
+              fill = bcolors[2], alpha = 0.25, show.legend = F) +
+  geom_line(show.legend = F, col = bcolors[2]) +
+  facet_grid(~strata, scales = "free") +
+  geom_point(aes(x = year, y = obs), col = "black") +
+  geom_errorbar(aes(x = year, ymin = obs_lci, ymax = obs_uci), col = "black") +
+  scale_y_continuous(labels = scales::comma, expand = c(0.01, 0), limits = c(0, NA)) +
+  labs(x = "", y = 'Biomass (t)',
+       fill = NULL, colour = NULL, shape = NULL)
+
+ggsave(path = out_path, 
+       "Appendix_NBS_AKskate_rema.png",plot=NBS_plot,dpi=600,width = 10, height = 5)

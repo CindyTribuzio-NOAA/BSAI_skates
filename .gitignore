@@ -21,6 +21,7 @@ database.csv
 # Don't track explorations_notused folders
 explorations_notused/
 SBarbeaux_files_compare/
+outside_analyses/
 
 # Don't track binary or fig files
 *.docx

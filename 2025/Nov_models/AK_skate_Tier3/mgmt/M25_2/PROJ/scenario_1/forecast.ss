@@ -37,7 +37,7 @@
 -9999 -1
 # enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999
 -9999 -1
-2 #_InputBasis
+0 #_InputBasis
 -9999 0 0 0
 #
 999 # verify end of input 

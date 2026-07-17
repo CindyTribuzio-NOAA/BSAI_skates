@@ -11,60 +11,65 @@ lapply(libs, library, character.only = TRUE)
 # Default with no version downloads the latest release
 # r4ss::get_ss3_exe()
 
-AYR <- 2025
+AYR <- 2026
 
 exe_loc <- here::here(paste0(AYR, '/Nov_models/AK_skate_Tier3/ss.exe'))
 
 ##########
-#base model (14_2d) brought over without re-running
-#version update ran in M14_2d_ss3version
+# Model 25_2a----
+# tried a bunch of crap that wasn't written down, nothing improved
+M25_2a_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_2a')
 
-# Model 14_2d----
-# Previously accepted model, with updated data
-exe_loc_old <- here::here(paste0(AYR, '/Nov_models/AK_skate_Tier3/mgmt/M14_2d/ss_win.exe'))
-M14_2d_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M14_2d')
-r4ss::run(dir = M14_2d_path, skipfinished = FALSE, exe = exe_loc_old)
+r4ss::run(dir = M25_2a_path, skipfinished = FALSE, exe = exe_loc)
 
-M14_2d_out <- SS_output(M14_2d_path, printstats = FALSE, verbose = FALSE)
+M25_2a_out <- SS_output(M25_2a_path, printstats = FALSE, verbose = FALSE)
 
 # plots the results
-SS_plots(M14_2d_out)
+SS_plots(M25_2a_out)
 
-# Model 14_2d1----
-# base model with version update and recruitment ramp corrections
-M14_2d1_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M14_2d1')
+# Model 25_2M----
+# only changed NatM ~0.2 to see if that fixed anything
+M25_2M_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_2M')
 
-r4ss::run(dir = M14_2d1_path, skipfinished = FALSE, exe = exe_loc)
+r4ss::run(dir = M25_2M_path, skipfinished = FALSE, exe = exe_loc)
 
-M14_2d1_out <- SS_output(M14_2d1_path, printstats = FALSE, verbose = FALSE)
-
-# plots the results
-SS_plots(M14_2d1_out)
-
-# Model 25_2----
-# fixed starting point for slx, and widened some parameters, fixed ending pt for survey slx
-M25_2_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M25_2')
-
-r4ss::run(dir = M25_2_path, skipfinished = FALSE, exe = exe_loc)
-
-M25_2_out <- SS_output(M25_2_path, printstats = FALSE, verbose = FALSE)
+M25_2M_out <- SS_output(M25_2M_path, printstats = FALSE, verbose = FALSE)
 
 # plots the results
-SS_plots(M25_2_out)
+SS_plots(M25_2M_out)
 
-# Compare bridging models ----
-datapath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt')
+# Model 25_3M----
+# only changed NatM ~0.2 to see if that fixed anything
+M25_3M_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_3M')
+
+r4ss::run(dir = M25_3M_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_3M_out <- SS_output(M25_3M_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_3M_out)
+
+
+
+
+# Compare models ----
+datapath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch')
 setwd(datapath)
-bridge_out <- SSgetoutput(dirvec = c("M14_2d", 
-                                     "M14_2d1",
-                                     "M25_2"))
+bridge_out <- SSgetoutput(dirvec = c("M14_2d1",
+                                     "M25_2",
+                                     "M25_3",
+                                     "M25_2M",
+                                     "M25_3M"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 model_comp <- SSsummarize(bridge_out)
-plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'model_comparison')
+plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'model_comparison')
+if (!dir.exists(plotpath)) dir.create(plotpath, recursive = TRUE)
 SSplotComparisons(model_comp,
                   print = TRUE,
                   plotdir = here::here(plotpath),
-                  legendlabels = c('M14_2d', 
-                                   'M14_2d1',
-                                   'M25_2'
+                  legendlabels = c("M14_2d1",
+                                   "M25_2",
+                                   "M25_3",
+                                   "M25_2M",
+                                   "M25_3M"
                                    ))

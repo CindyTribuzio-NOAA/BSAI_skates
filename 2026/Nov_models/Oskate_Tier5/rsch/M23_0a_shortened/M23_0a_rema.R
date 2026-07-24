@@ -1,4 +1,4 @@
-# Tier 5 Models
+# Tier 5 alternative Models
 
 # set up ----
 # run this in case of updates
@@ -19,7 +19,7 @@ pYEAR <- 2026 #projection year, or how many years forward should this go
 SYR <- 2026 #recent survey year
 
 dat_path <- here::here(AYR, 'Nov_models', 'Oskate_Tier5', 'data'); dir.create(dat_path)
-out_path <- here::here(AYR, 'Nov_models', 'Oskate_Tier5', 'mgmt'); dir.create(out_path)
+out_path <- here::here(AYR, 'Nov_models', 'Oskate_Tier5', 'rsch','M23_0a_shortened'); dir.create(out_path)
 
 ggplot2::theme_set(cowplot::theme_cowplot(font_size = 13) +
                      cowplot::background_grid() +
@@ -40,79 +40,11 @@ biomass_dat <- read_csv(here::here(dat_path, paste0('Oskate_GAPbiomass_', AYR, '
   filter(species_code %nin% eggcodes)
 
 #Prep AI data----
-#AI data is special case because of introduction of leopard skate in 2010. Suggest to shorten time series 
-# for 2027 assessment to skip this confusion
-# summed using data from 2000 onward and avg prop adjustment for AK/leopard
-akl_dat <- biomass_dat %>% 
-  filter(year >= 2010 & year <= 2016,
-         survey == 52,
-         species_code %in% c(471, 477)) %>% 
-  select(year, ai_group, biomass)
-
-# Calculate proportions
-tot_b <- sum(akl_dat$biomass)
-
-avgL_prop <- akl_dat %>% 
-  group_by(year) %>% 
-  summarise(tot_bio = sum(biomass)) %>% 
-  right_join(akl_dat) %>% 
-  mutate(spec_prop = biomass/tot_bio) %>% 
-  group_by(ai_group) %>% 
-  summarise(mean_prop = mean(spec_prop)) %>% 
-  filter(ai_group == "Alaska") %>% 
-  select(mean_prop)
-
-totL_prop <- akl_dat %>% 
-  group_by(ai_group) %>% 
-  summarise(spec_bio = sum(biomass)) %>% 
-  mutate(spec_prop = spec_bio/tot_b) %>% 
-  filter(ai_group == "Alaska") %>% 
-  select(spec_prop)
-
-# Create new dataframe for avg prop
-akl_bio_avg <- biomass_dat %>% 
-  filter(year >= 2000 & year <= 2009,
-         survey == 52,
-         species_code %in% c(471)) %>% 
-  select(strat = ai_group, year, biomass, biomass_var) %>% 
-  mutate(new_biom = biomass * as.numeric(avgL_prop),
-         new_var = biomass_var * as.numeric(avgL_prop),
-         diff_biom = biomass - new_biom,
-         diff_var = biomass_var - new_var)
-ak_avg <- biomass_dat %>% 
-  filter(year >= 2000 & year <= 2009,
-         survey == 52,
-         species_code %in% c(471)) %>% 
-  select(strata = ai_group, year) %>% 
-  right_join(akl_bio_avg) %>% 
-  select(strata, year, new_biom, new_var) %>% 
-  rename(biomass = new_biom,
-         var = new_var)
-leo_avg <- biomass_dat %>% 
-  filter(year >= 2000 & year <= 2009,
-         survey == 52,
-         species_code %in% c(477)) %>% 
-  select(strata = ai_group, year) %>% 
-  right_join(akl_bio_avg) %>% 
-  select(strata, year, diff_biom, diff_var) %>% 
-  rename(biomass = diff_biom,
-         var = diff_var)
-
-akl_avgbio_var <- leo_avg %>%
-  bind_rows(ak_avg) %>% 
-  select(strata, year, biomass, biomass_var = var)
-
-AI_dat_2010pres <- biomass_dat %>% 
-  filter(survey == 52,
-         year >= 2010)
-
+#AI data is special case because of introduction of leopard skate in 2010. Model 23_0a only uses data from 2010 onward in AI
 AI_dat<- biomass_dat %>% 
   filter(survey == 52,
-         year >= 2000 & year <= 2009,
-         species_code %nin% c(471, 477)) %>% 
-  bind_rows(AI_dat_2010pres) %>% 
+         year >= 2010) %>% 
   select(strata = ai_group, year, biomass, biomass_var) %>% 
-  bind_rows(akl_avgbio_var) %>% 
   group_by(year) %>% 
   summarise(biomass = sum(biomass),
             var = sum(biomass_var)) %>% 
@@ -231,11 +163,8 @@ write_csv(SurvBiom, here::here(out_path, 'Tier5_Otherskates.csv'))
 # species specific rema for appendices ----
 AIspec_dat<- biomass_dat %>% 
   filter(survey == 52,
-         year >= 2000 & year <= 2009,
-         species_code %nin% c(471, 477)) %>% 
-  bind_rows(AI_dat_2010pres) %>% 
+         year >= 2010) %>% 
   select(strata = ai_group, year, biomass, biomass_var) %>% 
-  bind_rows(akl_avgbio_var) %>% 
   filter(!is.na(strata)) %>% 
   group_by(year, strata) %>% 
   summarise(biomass = sum(biomass),

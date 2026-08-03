@@ -1,5 +1,10 @@
 # Bridging Model 14_2d to the proposed model for 2025
-# developed by C Tribuzio October 2025
+# developed by C Tribuzio October 2026
+
+#TODO
+# confirm 25_2a
+# run 25_3 and 25_3a
+# run both with high M
 
 # setup ----
 libs <- c("r4ss", "here", "tidyverse")

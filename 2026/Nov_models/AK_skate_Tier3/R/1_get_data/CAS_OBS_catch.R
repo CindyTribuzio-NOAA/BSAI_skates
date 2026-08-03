@@ -1,5 +1,5 @@
 #AKRO CAS Data ----
-#Updated 8/21/2024 by C. Tribuzio
+#Updated 7/30/2026 by C. Tribuzio
 #This code will pull the data from AKFIN and clean it up for use in the assessment
 
 
@@ -13,8 +13,8 @@ if(length(libs[which(libs %in% rownames(installed.packages()) == FALSE )]) > 0) 
 lapply(libs, library, character.only = TRUE)
 '%nin%'<-Negate('%in%') #this is a handy function
 
-dat_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'data')
-dir.create(dat_path)
+#dat_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'data')
+#dir.create(dat_path)
 
 AYR <- 2026
 
@@ -68,7 +68,7 @@ CASdat <- sqlQuery(channel_akfin, query = ("
   #                                                                                     if_else(is.na(trip_target_name), "Other", "Flatfish")))))))))) %>% 
   #select(-c(species_name))
 
-write_csv(CASdat, here::here(dat_path, paste0("confidential_CAS_skates_", AYR, ".csv")))
+write_csv(CASdat, here::here(paste0("confidential_CAS_skates_", AYR, ".csv")))
 
 #AKskt_CAS <- CASdat %>% 
 #  group_by(FMP_GEAR, YEAR) %>% 
@@ -93,4 +93,4 @@ WHERE
       AND norpac.debriefed_spcomp.species BETWEEN 85 AND 98 )
     OR (norpac.debriefed_spcomp.species BETWEEN 159 AND 168 )"))
 
-write_csv(NORPAC_dat, here::here(dat_path, paste0("confidential_NORPAC_skates_", AYR, ".csv")))
+write_csv(NORPAC_dat, here::here(paste0("confidential_NORPAC_skates_", AYR, ".csv")))

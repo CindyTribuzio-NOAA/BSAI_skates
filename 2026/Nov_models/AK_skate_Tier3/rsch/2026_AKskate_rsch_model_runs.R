@@ -16,8 +16,48 @@ AYR <- 2026
 exe_loc <- here::here(paste0(AYR, '/Nov_models/AK_skate_Tier3/ss.exe'))
 
 ##########
+# Model 14_2d1_fixedslx----
+# fixed all selectivities to see if that changed outcome
+# note: did this because when I fixed the selectivies in 25_2 to be the same as 14_d1, fit was different
+M14_2d1_fs_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M14_2d1_fixedslx')
+
+r4ss::run(dir = M14_2d1_fs_path, skipfinished = FALSE, exe = exe_loc)
+
+M14_2d1_fs_out <- SS_output(M14_2d1_fs_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M14_2d1_fs_out)
+
+# Model 14_2d1_fixedslxgrowth----
+# fixed all selectivities like 14_2d1
+# fixing growth and CV on age like 25_2
+M14_2d1_fsg_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M14_2d1_fixedslxgrowth')
+
+r4ss::run(dir = M14_2d1_fsg_path, skipfinished = FALSE, exe = exe_loc)
+
+M14_2d1_fsg_out <- SS_output(M14_2d1_fsg_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M14_2d1_fsg_out)
+
+# Model 14_2d1_fixedslx_cvgr----
+# fixed all selectivities like 14_2d1
+# fixed CV on age like 14_2d1
+# fixed growth parameters from outside the model
+M14_2d1_fscv_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M14_2d1_fixedslx_cvgr')
+
+r4ss::run(dir = M14_2d1_fscv_path, skipfinished = FALSE, exe = exe_loc)
+
+M14_2d1_fscv_out <- SS_output(M14_2d1_fscv_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M14_2d1_fscv_out)
+
+
+##########
 # Model 25_2a----
-# tried a bunch of crap that wasn't written down, nothing improved
+# growth from 14_2d1_fixedslx_cvgr
+# selectivities from 25_2
 M25_2a_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_2a')
 
 r4ss::run(dir = M25_2a_path, skipfinished = FALSE, exe = exe_loc)

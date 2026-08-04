@@ -134,7 +134,7 @@ plot_spr_curves(spr_M_out)
 # setting up the M scenarios
 M_vec <- seq(0.07, 0.23, by = 0.01)
 
-M_out <- as.data.frame(matrix(nrow = length(M_vec), ncol = 3, dimnames = list(NULL, c('F40', 'F35', 'M'))))
+M_out <- as.data.frame(matrix(nrow = length(M_vec), ncol = 3, dimnames = list(NULL, c('FABC', 'FOFL', 'M'))))
 
 for(i in 1:length(M_vec)){
   #loop_inp <- inp_M
@@ -177,7 +177,7 @@ h_lines <- M_out %>%
 ph_lines <- M_out %>% 
   filter(round(M, 2) == 0.21) #had to do the round due to some weird R precision floating intenger thing
 T3_lines <- M_out %>% 
-  filter(round(F_rate, 3) == 0.098)
+  filter(round(F_rate, 3) == 0.11)
 M_plot <- ggplot(M_out, aes(x = M, y = F_rate, color = type))+
   geom_line(linewidth = 1)+
   geom_segment(data = h_lines, aes(x = M, xend = M, y = -Inf, yend = max(F_rate)), linetype = 'dashed', color = "black")+
@@ -220,8 +220,8 @@ M_plot <- ggplot(M_out, aes(x = M, y = F_rate, color = type))+
     family = "sans",   # Matches ggplot2's default theme font
     hjust = -0.1
   ) + 
-  annotate("text", x = 0.08, y = 0.099, color = 'grey70', label = "Tier 3 F40=0.098", family = 'sans')+
-  annotate("text", x = 0.095, y = 0.09, color = 'grey70', label = "M=0.09", family = 'sans')+
+  annotate("text", x = 0.076, y = 0.111, color = 'grey70', label = "Tier 3 FOFL=0.11", family = 'sans')+
+  annotate("text", x = 0.085, y = 0.09, color = 'grey70', label = "M=0.08", family = 'sans')+
   labs(y = "F rate", x = "Natural Mortality (M)")+
   #scale_color_viridis_d(option = 'turbo')+
   scale_color_brewer(palette = "Dark2", guide = guide_legend(title = NULL))+
@@ -282,12 +282,29 @@ for(i in 1:nrow(ranlpars)){
 }
 
 # plot heatmap
-lslx_plot <- ggplot(lslx_out, aes(x = a50, y = delta, fill = F40)) +
+lslx_plot <- ggplot(lslx_out, aes(x = a50, y = delta, fill = F35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   labs(
     title = "Logistic Selectivity Parameters",
     #subtitle = "AK Skate Sensitivity Analysis",
+    x = "a50",
+    y = "delta"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(size = 11)
+  )
+
+log_zoom_dat <- filter(lslx_out) %>% 
+  filter(between(F35, 0.10, 0.15))
+log_zoom <- ggplot(log_zoom_dat, aes(x = a50, y = delta, fill = F35)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
+  labs(
+    title = "Logistic sensitivity",
+    subtitle = "Filtered by bookends",
     x = "a50",
     y = "delta"
   ) +
@@ -302,21 +319,21 @@ lslx_plot <- ggplot(lslx_out, aes(x = a50, y = delta, fill = F40)) +
 #why don't all combos that have F40 values also have curves??? Rounding error somewhere??
 
 lslx_thin <- lslx_out %>% 
-  filter(between(F40, 0.097, 0.13)) %>% 
+  filter(between(F35, 0.1, 0.15)) %>% 
   expand_grid(age = ages) %>%
   mutate(
     slx = 1 / (1 + exp(-(age - a50) / delta)))
 
-F40_lslx_plot <- ggplot(lslx_thin, aes(x = age, y = slx, color = F40)) +
+F35_lslx_plot <- ggplot(lslx_thin, aes(x = age, y = slx, color = F35)) +
   # Draw a line for every single distinct parameter combination
   geom_line(
     aes(group = interaction(a50, delta)), 
     alpha = 0.5,
     linewidth = 0.4
   ) +
-  scale_color_viridis_c(option = "viridis") + # Continuous Viridis scale
+  scale_color_viridis_c(option = "viridis", name = 'FOFL') + # Continuous Viridis scale
   labs(
-    title = "Logistic Curves with similar F40 results",
+    title = "Logistic Curves with similar FOFL results",
     x = "Age",
     y = "Selectivity"
   ) +
@@ -395,11 +412,11 @@ for(i in 1:total_scenarios) {
 
 final_ML_results <- ranlpars %>%
   left_join(results_collector, by = "scenario") %>% 
-  filter(!is.na(F_40))
+  filter(!is.na(F_35))
 
-Ml_plot <- ggplot(final_ML_results, aes(x = M, y = delta, fill = F_40)) +
+Ml_plot <- ggplot(final_ML_results, aes(x = M, y = delta, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_wrap(~a50, ncol = 4,
              labeller = labeller(
                a50  = label_both,
@@ -421,12 +438,12 @@ Ml_plot <- ggplot(final_ML_results, aes(x = M, y = delta, fill = F_40)) +
 #why don't all combos that have F40 values also have curves??? Rounding error somewhere??
 
 Mlslx_thin <- final_ML_results %>% 
-  filter(between(F_40, 0.097, 0.13)) %>% 
+  filter(between(F_35, 0.1, 0.15)) %>% 
   expand_grid(age = ages) %>%
   mutate(
     slx = 1 / (1 + exp(-(age - a50) / delta)))
 
-F40_Mlslx_plot <- ggplot(Mlslx_thin, aes(x = age, y = slx, color = F_40)) +
+F35_Mlslx_plot <- ggplot(Mlslx_thin, aes(x = age, y = slx, color = F_35)) +
   # Draw a line for every single distinct parameter combination
   geom_line(
     aes(group = interaction(a50, delta)), 
@@ -437,7 +454,7 @@ F40_Mlslx_plot <- ggplot(Mlslx_thin, aes(x = age, y = slx, color = F_40)) +
              labeller = labeller(
                M  = label_both,
              ))+
-  scale_color_viridis_c(option = "viridis") + # Continuous Viridis scale
+  scale_color_viridis_c(option = "viridis", name = "FOFL") + # Continuous Viridis scale
   labs(
     title = "M impacted Logistic Curves with similar F40 results",
     x = "Age",
@@ -462,13 +479,13 @@ ages_grid <- ages # Maps to your existing 'ages' object
 # Create a grid varying Peak, Ascending Width, and Descending Width
 # Keep top, start, and end parameters fixed to the Longline baseline defaults
 ranlpars <- expand.grid(
-  peak_age   = seq(6, 14, by = 2),        # Shifting peak selectivity age (Years)
+  peak_age   = seq(4, 10, by = 2),        # Shifting peak selectivity age (Years)
   ascend_se  = seq(1.0, 3.0, by = 0.5),   # Entry scale parameter in age-variance space
   descend_se = seq(1.0, 3.0, by = 0.5),   # Dome decay rate parameter in age-variance space
   end_logit  = seq(-5.0, 5, by = 1.0)  
 ) %>%
   mutate(
-    top_logit   = -9.52666, 
+    top_logit   = -10, 
     start_logit = -999,
     scenario    = paste0("Scenario_", row_number())
   )
@@ -585,9 +602,9 @@ final_sensitivity_results <- ranlpars %>%
   left_join(results_collector, by = "scenario")
 
 # make heatmap 
-dome1 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fill = F_40)) +
+dome1 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~end_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -606,10 +623,10 @@ dome1 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fi
   )
 
 dome1_zoom_dat <- filter(final_sensitivity_results) %>% 
-  filter(between(F_40, 0.09, 0.13))
-dome1_zoom <- ggplot(dome1_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F_40)) +
+  filter(between(F_35, 0.1, 0.15))
+dome1_zoom <- ggplot(dome1_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~end_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -631,7 +648,7 @@ dome1_zoom <- ggplot(dome1_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F
 # Create a grid varying Peak, Ascending Width, and Descending Width
 # Keep top, start, and end parameters fixed to the Longline baseline defaults
 ranlpars <- expand.grid(
-  peak_age   = seq(6, 20, by = 2),        # Shifting peak selectivity age (Years)
+  peak_age   = seq(4, 10, by = 2),        # Shifting peak selectivity age (Years)
   top_logit   = seq(-5.0, 5, by = 1.0),  
   start_logit = seq(-5.0, 5, by = 1.0),  
   end_logit  = seq(-5.0, 5, by = 1.0)  
@@ -754,9 +771,9 @@ final_sensitivity_results <- ranlpars %>%
   left_join(results_collector, by = "scenario")
 
 # make heatmap 
-dome2 <- ggplot(final_sensitivity_results, aes(x = start_logit, y = end_logit, fill = F_40)) +
+dome2 <- ggplot(final_sensitivity_results, aes(x = start_logit, y = end_logit, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~top_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -775,10 +792,10 @@ dome2 <- ggplot(final_sensitivity_results, aes(x = start_logit, y = end_logit, f
   )
 
 dome2_zoom_dat <- filter(final_sensitivity_results) %>% 
-  filter(between(F_40, 0.09, 0.13))
-dome2_zoom <- ggplot(dome2_zoom_dat, aes(x = start_logit, y = end_logit, fill = F_40)) +
+  filter(between(F_35, 0.1, 0.15))
+dome2_zoom <- ggplot(dome2_zoom_dat, aes(x = start_logit, y = end_logit, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~top_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -787,8 +804,8 @@ dome2_zoom <- ggplot(dome2_zoom_dat, aes(x = start_logit, y = end_logit, fill = 
   labs(
     title = "Dome sensitivity",
     subtitle = "Fixed ascending and descending se",
-    x = "ascending se",
-    y = "descending se"
+    x = "start logit",
+    y = "end logit"
   ) +
   theme_minimal() +
   theme(
@@ -798,7 +815,7 @@ dome2_zoom <- ggplot(dome2_zoom_dat, aes(x = start_logit, y = end_logit, fill = 
 
 # fixed top and end logit----
 ranlpars <- expand.grid(
-  peak_age   = seq(6, 20, by = 2),        # Shifting peak selectivity age (Years)
+  peak_age   = seq(4, 10, by = 2),        # Shifting peak selectivity age (Years)
   ascend_se  = seq(1.0, 3.0, by = 0.5),   # Entry scale parameter in age-variance space
   descend_se = seq(1.0, 3.0, by = 0.5),   # Dome decay rate parameter in age-variance space
   start_logit = seq(-5.0, 5, by = 1.0)
@@ -921,9 +938,9 @@ final_sensitivity_results <- ranlpars %>%
   left_join(results_collector, by = "scenario")
 
 # make heatmap 
-dome3 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fill = F_40)) +
+dome3 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~start_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -942,10 +959,10 @@ dome3 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fi
   )
 
 dome3_zoom_dat <- filter(final_sensitivity_results) %>% 
-  filter(between(F_40, 0.09, 0.13))
-dome3_zoom <- ggplot(dome3_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F_40)) +
+  filter(between(F_35, 0.1, 0.15))
+dome3_zoom <- ggplot(dome3_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~start_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -965,14 +982,14 @@ dome3_zoom <- ggplot(dome3_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F
 
 # fixed top and start logit----
 ranlpars <- expand.grid(
-  peak_age   = seq(7, 11, by = 1),        # Shifting peak selectivity age (Years)
+  peak_age   = seq(4, 10, by = 2),        # Shifting peak selectivity age (Years)
   ascend_se  = seq(1.0, 3.0, by = 0.5),   # Entry scale parameter in age-variance space
   descend_se = seq(1.0, 3.0, by = 0.5),   # Dome decay rate parameter in age-variance space
   end_logit = seq(-2, 2, by = 1.0)
 ) %>%
   mutate(
     top_logit   = -10, 
-    start_logit  = 0,
+    start_logit  = -1,
     scenario    = paste0("Scenario_", row_number())
   )
 
@@ -1088,9 +1105,9 @@ final_sensitivity_results <- ranlpars %>%
   left_join(results_collector, by = "scenario")
 
 # make heatmap 
-dome4 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fill = F_40)) +
+dome4 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~end_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -1109,10 +1126,10 @@ dome4 <- ggplot(final_sensitivity_results, aes(x = ascend_se, y = descend_se, fi
   )
 
 dome4_zoom_dat <- filter(final_sensitivity_results) %>% 
-  filter(between(F_40, 0.09, 0.13))
-dome4_zoom <- ggplot(dome4_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F_40)) +
+  filter(between(F_35, 0.1, 0.15))
+dome4_zoom <- ggplot(dome4_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F_35)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "viridis", name = "F40") +
+  scale_fill_viridis_c(option = "viridis", name = "FOFL") +
   facet_grid(peak_age~end_logit,
              labeller = labeller(
                peak_age  = label_both,   # Displays as "peak_age: 6", "peak_age: 8", etc.
@@ -1140,5 +1157,5 @@ dome4_zoom <- ggplot(dome4_zoom_dat, aes(x = ascend_se, y = descend_se, fill = F
 
 
 
-# Summary Plots----
-M_plot / lslx_plot
+# complete dome optimization----
+

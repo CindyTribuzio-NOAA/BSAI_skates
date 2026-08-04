@@ -32,6 +32,65 @@ matb_fem <- 1.574
 maa <- 1/(1+exp(-(mata_fem+matb_fem*ages)))
 
 # selectivity----
+# including MOdel 14_2d1 for comparison
+# Load your SS3 model output
+m14_2d_out <- SS_output(dir = here::here(2025, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M14_2d1'))
+
+# 1. Inspect your fleet names and IDs to find your exact gears
+print(m14_2d_out$FleetNames) 
+# Note down the exact index or string name (e.g., Fleet 1 = "Trawl", Fleet 2 = "Longline")
+
+# 2. Get the maximum model age used (to match vector length)
+m14_2d_max_age <- m14_2d_out$accuage  # or use max(ss_out$ageselex$Age)
+
+# 3. Pull the calculated "Asel" (Age-selectivity) rows for the terminal year
+#    Note: Factor == "Asel" represents the combined age-based selectivity
+m14_2d_terminal_year <- m14_2d_out$endyr
+
+# EXTRACTION FOR TRAWL
+m14_2d_twl_selex <- m14_2d_out$ageselex %>%
+  filter(Factor == "Asel2", 
+         Yr == m14_2d_terminal_year, 
+         Fleet == 2,          # Swap with your actual Trawl Fleet ID/Name
+         Sex == 1) %>%        # 1 = Females/unisex, 2 = Males
+  select(as.character(0:m14_2d_max_age)) %>%
+  as.numeric()
+
+# EXTRACTION FOR LONGLINE
+m14_2d_lgl_selex <- m14_2d_out$ageselex %>%
+  filter(Factor == "Asel2", 
+         Yr == m14_2d_terminal_year, 
+         Fleet == 1,          # Swap with your actual Longline Fleet ID/Name
+         Sex == 1) %>%
+  select(as.character(0:m14_2d_max_age)) %>%
+  as.numeric()
+
+#SPR inputs----
+inp_14_2d1 <- spr_input(
+  ages = ages,
+  species = list(
+    AK_skate = list(
+      len_at_age = list(type = "vb", Linf = 135.39, k = 0.10, t0 = -1.60), #Matta and Gunderson 2007
+      wt_at_age  = list(type = "wl", alpha = 0.000009, beta = 2.9617), #Matta and Gunderson 2007
+      maturity  = list(type = "vector", m = maa),
+      M = 0.13, #current assessment value
+      selectivity = list(
+        type = "fleets",
+        fleets = list(
+          twl = list(
+            propF = pTRW,
+            selex = list(type = "vector", s = m14_2d_twl_selex)
+          ),
+          ll = list(
+            propF = pHAL,
+            selex = list(type = "vector", s= m14_2d_lgl_selex)
+          )
+        )
+      )
+    )
+  ),
+  use_plus_group = FALSE
+)
 # using Model 25_2 fixed for this analysis
 # Load your SS3 model output
 m25_2_out <- SS_output(dir = here::here(2025, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M25_2'))
@@ -91,6 +150,32 @@ inp_25_2 <- spr_input(
   ),
   use_plus_group = FALSE
 )
+
+# logistic for comparison
+a50_twl <- 3
+del_twl <- -0.5
+a50_lgl <- 7
+del_lgl <- -2
+
+inp_logistic <- spr_input(
+  ages = ages,
+  species = list(
+    AK_skate = list(
+      len_at_age = list(type = "vb", Linf = 135.39, k = 0.10, t0 = -1.60), 
+      wt_at_age  = list(type = "wl", alpha = 0.000009, beta = 2.9617), 
+      maturity  = list(type = "vector", m = maa),
+      M = 0.13,
+      selectivity = list(
+        type = "fleets",
+        fleets = list(
+          twl = list(
+            propF = pTRW,
+            selex = list(type = "logistic", a50 = a50_twl, delta = del_twl)#need to make these vectors of selex @ age
+          ),
+          ll = list(
+            propF = pHAL,
+            selex = list(type = "logistic", a50 = a50_lgl, delta = del_lgl)
+    ))))))
 
 # take a look at the inputs
 str(inp_14_2d1, max.level = 3)
@@ -157,13 +242,13 @@ slx_25_2_twl <- as_tibble(m25_2_twl_selex) %>%
   bind_cols(ages) %>% 
   rename(selex = value,
          age = ...4)
-slx_14_2d1_lgl <- as_tibble(m14_2d1_lgl_selex) %>% 
+slx_14_2d1_lgl <- as_tibble(m14_2d_lgl_selex) %>% 
   mutate(select_fun = 'M14_2d1',
          type = 'LGL') %>% 
   bind_cols(ages) %>% 
   rename(selex = value,
          age = ...4)
-slx_14_2d1_twl <- as_tibble(m14_2d1_twl_selex) %>% 
+slx_14_2d1_twl <- as_tibble(m14_2d_twl_selex) %>% 
   mutate(select_fun = 'M14_2d1',
          type = 'TWL') %>% 
   bind_cols(ages) %>% 

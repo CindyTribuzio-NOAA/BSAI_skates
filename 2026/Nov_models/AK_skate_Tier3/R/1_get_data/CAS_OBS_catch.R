@@ -94,3 +94,14 @@ WHERE
     OR (norpac.debriefed_spcomp.species BETWEEN 159 AND 168 )"))
 
 write_csv(NORPAC_dat, here::here(paste0("confidential_NORPAC_skates_", AYR, ".csv")))
+
+NORPAC_AKagedat <- sqlQuery(channel_akfin, query = ("
+SELECT *
+FROM
+    norpac.debriefed_age_flat_mv
+WHERE
+    (species = 88
+      and nmfs_area between 540 and 544
+      and year > 2012)"))
+
+write_csv(NORPAC_AKagedat, here::here(paste0("confidential_NORPAC_AIAKskatesages_", AYR, ".csv")))

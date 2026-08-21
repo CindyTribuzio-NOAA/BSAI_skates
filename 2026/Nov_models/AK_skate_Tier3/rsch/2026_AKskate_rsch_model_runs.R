@@ -33,6 +33,17 @@ M14_2d1_fs_out <- SS_output(M14_2d1_fs_path, printstats = FALSE, verbose = FALSE
 # plots the results
 SS_plots(M14_2d1_fs_out)
 
+# Model 14_2d1_cvbounds----
+# widened the bounds on the CV for young/old ages
+M14_2d1_cv_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M14_2d1_cvbounds')
+
+r4ss::run(dir = M14_2d1_cv_path, skipfinished = FALSE, exe = exe_loc)
+
+M14_2d1_cv_out <- SS_output(M14_2d1_cv_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M14_2d1_cv_out)
+
 # Model 14_2d1_fixedslxgrowth----
 # fixed all selectivities like 14_2d1
 # fixing growth and CV on age like 25_2
@@ -72,49 +83,130 @@ M25_2a_out <- SS_output(M25_2a_path, printstats = FALSE, verbose = FALSE)
 # plots the results
 SS_plots(M25_2a_out)
 
-# Model 25_2M----
-# only changed NatM ~0.2 to see if that fixed anything
-M25_2M_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_2M')
+##########
+# Model 25_2----
+# original 25_2 from Sept 2025
+# Q = 0.836 (or something close to that)
+M25_2_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_2')
 
-r4ss::run(dir = M25_2M_path, skipfinished = FALSE, exe = exe_loc)
+r4ss::run(dir = M25_2_path, skipfinished = FALSE, exe = exe_loc)
 
-M25_2M_out <- SS_output(M25_2M_path, printstats = FALSE, verbose = FALSE)
+M25_2_out <- SS_output(M25_2_path, printstats = FALSE, verbose = FALSE)
 
 # plots the results
-SS_plots(M25_2M_out)
+SS_plots(M25_2_out)
+
+##########
+# Model 25_3a----
+# growth from 14_2d1_fixedslx_cvgr
+# selectivities from 25_2
+M25_3a_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_3a')
+
+r4ss::run(dir = M25_3a_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_3a_out <- SS_output(M25_3a_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_3a_out)
+
+##########
+# Model 25_3----
+# original from Sept 2025
+# Q = 1
+M25_3_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_3')
+
+r4ss::run(dir = M25_3_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_3_out <- SS_output(M25_3_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_3_out)
+
+# Model 25_2M----
+# only changed NatM ~0.2 to see if that fixed anything
+M25_2aM_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_2a_M')
+
+r4ss::run(dir = M25_2aM_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_2aM_out <- SS_output(M25_2aM_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_2aM_out)
 
 # Model 25_3M----
 # only changed NatM ~0.2 to see if that fixed anything
-M25_3M_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_3M')
+M25_3aM_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'M25_3a_M')
 
-r4ss::run(dir = M25_3M_path, skipfinished = FALSE, exe = exe_loc)
+r4ss::run(dir = M25_3aM_path, skipfinished = FALSE, exe = exe_loc)
 
-M25_3M_out <- SS_output(M25_3M_path, printstats = FALSE, verbose = FALSE)
+M25_3aM_out <- SS_output(M25_3aM_path, printstats = FALSE, verbose = FALSE)
 
 # plots the results
-SS_plots(M25_3M_out)
+SS_plots(M25_3aM_out)
 
 
 
 
 # Compare models ----
+# bridge
 datapath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch')
 setwd(datapath)
 bridge_out <- SSgetoutput(dirvec = c("M14_2d1",
-                                     "M25_2",
-                                     "M25_3",
-                                     "M25_2M",
-                                     "M25_3M"))
+                                     "M14_2d1_fixedslx",
+                                     "M14_2d1_cvbounds",
+                                     #"M14_2d1_fixedslxgrowth",
+                                     "M14_2d1_fixedslx_cvgr",
+                                     "M25_3a",
+                                     "M25_3"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 model_comp <- SSsummarize(bridge_out)
-plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'model_comparison')
+plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'model_comparison', 'bridge')
 if (!dir.exists(plotpath)) dir.create(plotpath, recursive = TRUE)
 SSplotComparisons(model_comp,
                   print = TRUE,
                   plotdir = here::here(plotpath),
                   legendlabels = c("M14_2d1",
-                                   "M25_2",
-                                   "M25_3",
-                                   "M25_2M",
-                                   "M25_3M"
+                                   "M14_2d1_fixed_slx",
+                                   "M14_2d1_cvbounds",
+                                   #"M14_2d1_25_2growth",
+                                   "M14_2d1_25_3gr_14_2CV",
+                                   "M25_3a",
+                                   "M25_3"
                                    ))
+
+#catchability
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M25_2",
+                                     "M25_2a",
+                                     "M25_3a",
+                                     "M25_3"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'model_comparison', 'catchability')
+if (!dir.exists(plotpath)) dir.create(plotpath, recursive = TRUE)
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c("M25_2",
+                                   "M25_2a",
+                                   "M25_3a",
+                                   "M25_3"))
+
+#mortality
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M25_2a_M",
+                                     "M25_2a",
+                                     "M25_3a",
+                                     "M25_3a_M"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'rsch', 'model_comparison', 'mortality')
+if (!dir.exists(plotpath)) dir.create(plotpath, recursive = TRUE)
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c("M25_2a_M",
+                                   "M25_2a",
+                                   "M25_3a",
+                                   "M25_3a_M"))
+

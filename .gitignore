@@ -63,6 +63,10 @@ Thumbs.db
 *.mcm
 *.hst
 *.psv
+*.ss_new
+data_echo.ss_new
+forecast.ss_new
+wtatage.ss_new
 gradient.1
 gradient.2
 gradient.3

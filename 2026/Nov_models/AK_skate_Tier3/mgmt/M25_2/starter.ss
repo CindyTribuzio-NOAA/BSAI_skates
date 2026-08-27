@@ -27,7 +27,7 @@ control.ss
 0 # N individual STD years 
 #vector of year values 
 
-0.0001 # final convergence criteria (e.g. 1.0e-04) 
+0.00001 # final convergence criteria (e.g. 1.0e-04) 
 0 # retrospective year relative to end year (e.g. -4)
 3 # min age for calc of summary biomass
 1 # Depletion basis:  denom is: 0=skip; 1=rel X*SPB0; 2=rel SPBmsy; 3=rel X*SPB_styr; 4=rel X*SPB_endyr

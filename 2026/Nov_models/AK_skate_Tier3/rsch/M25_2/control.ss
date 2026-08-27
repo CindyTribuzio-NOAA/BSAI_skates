@@ -230,26 +230,26 @@
 #
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 # 1   LGL LenSelex
-           7.6         126.2       92.9554           111          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_peak_LGL(1)
-           -10             4            -1          -0.1          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_top_logit_LGL(1)
-            -1             9       7.06511             7          0.05             0          3          0          0          0          0        0.5          0          0  #  Size_DblN_ascend_se_LGL(1)
-           -10             9             4           4.7          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_descend_se_LGL(1)
+           7.6         126.2       93.0573           111          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_peak_LGL(1)
+           -10            10            -1             4          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_top_logit_LGL(1)
+            -1             9       6.82803           4.9          0.05             0          3          0          0          0          0        0.5          0          0  #  Size_DblN_ascend_se_LGL(1)
+           -20             9             4           4.7          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_descend_se_LGL(1)
           -999             9          -999          -2.2          0.05             0         -2          0          0          0          0        0.5          0          0  #  Size_DblN_start_logit_LGL(1)
-            -9             9           1.5           1.5          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_end_logit_LGL(1)
+            -9             9      -4.30027             9          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_end_logit_LGL(1)
 # 2   TWL LenSelex
-           7.6         126.2       73.9541            73          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_peak_TWL(2)
-           -10             4            -1          -0.5          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_top_logit_TWL(2)
-            -1             9       7.25147             7          0.05             0          3          0          0          0          0        0.5          0          0  #  Size_DblN_ascend_se_TWL(2)
+           7.6         126.2       90.4639            49          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_peak_TWL(2)
+           -10            10            -1             4          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_top_logit_TWL(2)
+            -1             9       7.64386           4.8          0.05             0          3          0          0          0          0        0.5          0          0  #  Size_DblN_ascend_se_TWL(2)
            -10             9             4           4.4          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_descend_se_TWL(2)
           -999             9          -999          -0.7          0.05             0         -2          0          0          0          0        0.5          0          0  #  Size_DblN_start_logit_TWL(2)
-            -9             9           0.7           0.7          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_end_logit_TWL(2)
+            -9             9      -3.76286             9          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_end_logit_TWL(2)
 # 3   SURV LenSelex
-           7.6         126.2       60.0873            60          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_peak_SURV(3)
-           -10             4           -10          -0.5          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_top_logit_SURV(3)
-            -1             9        6.3798           6.4          0.05             0          3          0          0          0          0        0.5          0          0  #  Size_DblN_ascend_se_SURV(3)
-            -1             9             4           4.4          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_descend_se_SURV(3)
-          -999            99          -999          -0.7          0.05             0         -2          0          0          0          0        0.5          0          0  #  Size_DblN_start_logit_SURV(3)
-          -999            99            99             9          0.05             0         -2          0          0          0          0        0.5          0          0  #  Size_DblN_end_logit_SURV(3)
+           7.6         126.2       100.294            49          0.05             0          2          0          0          0          0        0.5          0          0  #  Size_DblN_peak_SURV(3)
+           -10            10            -1             4          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_top_logit_SURV(3)
+            -1             9       8.07359           4.8          0.05             0          3          0          0          0          0        0.5          0          0  #  Size_DblN_ascend_se_SURV(3)
+           -10             9             4           4.4          0.05             0         -3          0          0          0          0        0.5          0          0  #  Size_DblN_descend_se_SURV(3)
+          -999             9          -999          -0.7          0.05             0         -2          0          0          0          0        0.5          0          0  #  Size_DblN_start_logit_SURV(3)
+          -999            99            99            99          0.05             0         -2          0          0          0          0        0.5          0          0  #  Size_DblN_end_logit_SURV(3)
 # 1   LGL AgeSelex
 # 2   TWL AgeSelex
 # 3   SURV AgeSelex

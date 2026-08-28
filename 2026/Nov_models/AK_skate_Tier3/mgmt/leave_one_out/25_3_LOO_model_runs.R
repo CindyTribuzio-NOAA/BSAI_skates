@@ -111,6 +111,30 @@ M25_3si_out <- SS_output(M25_3si_path, printstats = FALSE, verbose = FALSE)
 # plots the results
 SS_plots(M25_3si_out)
 
+##########
+# Model 25_3_survonly----
+# no fishery lengths no age comps, trying to see if it will fit the survey index better
+M25_3so_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'leave_one_out', 'M25_3_survonly')
+
+r4ss::run(dir = M25_3so_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_3so_out <- SS_output(M25_3so_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_3so_out)
+
+##########
+# Model 25_3_survageonly----
+# no fishery lengths no age comps, trying to see if it will fit the survey index better
+M25_3sa_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'leave_one_out', 'M25_3_survageonly')
+
+r4ss::run(dir = M25_3sa_path, skipfinished = FALSE, exe = exe_loc)
+
+M25_3sa_out <- SS_output(M25_3sa_path, printstats = FALSE, verbose = FALSE)
+
+# plots the results
+SS_plots(M25_3sa_out)
+
 
 # Compare models ----
 datapath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'leave_one_out')
@@ -121,8 +145,7 @@ bridge_out <- SSgetoutput(dirvec = c("M25_3",
                                      "M25_3_nolgllength",
                                      "M25_3_nofisherylength",
                                      "M25_3_nosurvlength",
-                                     "M25_3_nolength",
-                                     "M25_3_nosurvindex"))
+                                     "M25_3_nolength"))
 setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
 model_comp <- SSsummarize(bridge_out)
 plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'leave_one_out', 'model_comparison')
@@ -136,6 +159,24 @@ SSplotComparisons(model_comp,
                                    "no lgl length",
                                    "no fishery length",
                                    "no survey length",
-                                   "no lengths",
-                                   "no survey index"
+                                   "no lengths"
                                    ))
+
+# adding data back in
+datapath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'leave_one_out')
+setwd(datapath)
+bridge_out <- SSgetoutput(dirvec = c("M25_3",
+                                     "M25_3_survonly",
+                                     "M25_3_survageonly"))
+setwd("C:/Users/cindy.Tribuzio/Work/SAFE/Assessments/BSAI_skates")
+model_comp <- SSsummarize(bridge_out)
+plotpath <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'leave_one_out', 'model_comparison', 'surveydat')
+if (!dir.exists(plotpath)) dir.create(plotpath, recursive = TRUE)
+SSplotComparisons(model_comp,
+                  print = TRUE,
+                  plotdir = here::here(plotpath),
+                  legendlabels = c("M25_3",
+                                   "survey index",
+                                   "survey index/ages"
+                  ))
+

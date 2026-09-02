@@ -34,7 +34,7 @@ GAP_biomass <- sqlQuery(channel_akfin, query = ("
                 and area_id in (99901, 99904, 99905)
                                                 ")) %>% 
   clean_names() %>% 
-  filter(species_code %nin% c(403, 404)) # 403 = egg cases, 404 = generic Raja group, almost no use, none since 1998
+  filter(species_code %nin% c(403, 404)) # 403 = egg cases, 404 = generic Raja group, almost no use, none since 1998 
 
 # Clean up and add CIs and CVs ----
 GAP_biomass <- GAP_biomass %>% 

@@ -59,7 +59,8 @@ fishery_AKlcomp2 <- sqlQuery(
       SPECIES,
       SEX,
       LENGTH,
-      FREQUENCY
+      FREQUENCY,
+      PERFORMANCE
     FROM NORPAC.debriefed_length_mv 
     WHERE (species = 88 AND nmfs_area BETWEEN 500 AND 543)
   ",

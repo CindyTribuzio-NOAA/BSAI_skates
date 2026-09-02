@@ -11,7 +11,7 @@ lapply(libs, library, character.only = TRUE)
 dat_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'data')
 dir.create(dat_path)
 
-AYR <- 2025
+AYR <- 2026
 
 dbname <- "akfin"
 db <- read_csv('database.csv')

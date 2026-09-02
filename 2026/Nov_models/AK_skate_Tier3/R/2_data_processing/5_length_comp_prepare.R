@@ -9,7 +9,7 @@ if(length(libs[which(libs %in% rownames(installed.packages()) == FALSE )]) > 0) 
 lapply(libs, library, character.only = TRUE)
 '%nin%'<-Negate('%in%') #this is a handy function
 
-AYR <- 2025
+AYR <- 2026
 
 dat_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'data')
 dir.create(dat_path)
@@ -51,7 +51,7 @@ sLcomps <- sLcomp_dat %>%
          source = "survey")
 
 # Trawl Fishery length comps----
-fLcomp_dat <- read_csv(here::here(dat_path, paste0('AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
+fLcomp_dat <- read_csv(here::here(dat_path, paste0('confidential_AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
   filter(GEAR <= 4,
          YEAR >= 2013, 
          FMP_AREA == "BSAI") %>% 
@@ -61,7 +61,7 @@ names(fLseq) <- "leng_cm"
 fLcomp_dat <- fLcomp_dat %>% 
   full_join(as.data.frame(fLseq))
 
-fNsamp <- read_csv(here::here(dat_path, paste0('AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
+fNsamp <- read_csv(here::here(dat_path, paste0('confidential_AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
   filter(GEAR <= 4,
          YEAR >= 2013) %>% 
   group_by(YEAR, HAUL_JOIN) %>% 
@@ -91,18 +91,17 @@ fLcomps <- fLcomp_dat %>%
          source = "TWL")
   
 # LL Fishery length comps----
-llLcomp_dat <- read_csv(here::here(dat_path, paste0('AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
+llLcomp_dat <- read_csv(here::here(dat_path, paste0('confidential_AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
   filter(GEAR >= 8,
          NMFS_AREA < 541,
-         YEAR >= 2013,
-         PERFORMANCE >= 1) %>% 
+         YEAR >= 2013) %>% #, PERFORMANCE >= 1
   select(YEAR, leng_cm = LENGTH, TOTAL = FREQUENCY)
 llLseq <- as.data.frame(seq(min(llLcomp_dat$leng_cm), max(llLcomp_dat$leng_cm)))
 names(llLseq) <- "leng_cm"
 llLcomp_dat <- llLcomp_dat %>% 
   full_join(as.data.frame(llLseq))
 
-LLNsamp <- read_csv(here::here(dat_path, paste0('AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
+LLNsamp <- read_csv(here::here(dat_path, paste0('confidential_AKskate_fisherysizecomp_', AYR, ".csv"))) %>%
   filter(YEAR >= 2013) %>% 
   group_by(YEAR, HAUL_JOIN, FMP_GEAR) %>% 
   summarise(somval = sum(FREQUENCY)) %>% 

@@ -27,6 +27,7 @@ M14_2d1_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M14_2d1
 r4ss::run(dir = M14_2d1_path, skipfinished = FALSE, exe = exe_loc)
 
 M14_2d1_out <- SS_output(M14_2d1_path, printstats = FALSE, verbose = FALSE)
+M14_2d1ramp <- SS_fitbiasramp(replist = M14_2d1_out, plot = T)
 
 # plots the results
 SS_plots(M14_2d1_out)
@@ -40,6 +41,7 @@ M25_3_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M25_3')
 r4ss::run(dir = M25_3_path, skipfinished = FALSE, exe = exe_loc)
 
 M25_3_out <- SS_output(M25_3_path, printstats = FALSE, verbose = FALSE)
+M25_3ramp <- SS_fitbiasramp(replist = M25_3_out, plot = T)
 
 # plots the results
 SS_plots(M25_3_out)

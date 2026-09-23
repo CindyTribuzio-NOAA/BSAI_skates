@@ -120,18 +120,18 @@
 #_no timevary SR parameters
 1 #do_recdev:  0=none; 1=devvector (R=F(SSB)+dev); 2=deviations (R=F(SSB)+dev); 3=deviations (R=R0*dev; dev2=R-f(SSB)); 4=like 3 with sum(dev2) adding penalty
 1950 # first year of main recr_devs; early devs can precede this era
-2018 # last year of main recr_devs; forecast devs start in following year
+2026 # last year of main recr_devs; forecast devs start in following year
 1 #_recdev phase 
 1 # (0/1) to read 13 advanced options
  0 #_recdev_early_start (0=none; neg value makes relative to recdev_start)
  -1 #_recdev_early_phase
  -1 #_forecast_recruitment phase (incl. late recr) (0 value resets to maxphase+1)
  1 #_lambda for Fcast_recr_like occurring before endyr+1
- 1942.5 #_last_yr_nobias_adj_in_MPD; begin of ramp
- 1967.3 #_first_yr_fullbias_adj_in_MPD; begin of plateau
- 2018 #_last_yr_fullbias_adj_in_MPD
- 2033.1 #_end_yr_for_ramp_in_MPD (can be in forecast to shape ramp, but SS3 sets bias_adj to 0.0 for fcast yrs)
- 0.3401 #_max_bias_adj_in_MPD (typical ~0.8; -3 sets all years to 0.0; -2 sets all non-forecast yrs w/ estimated recdevs to 1.0; -1 sets biasadj=1.0 for all yrs w/ recdevs)
+ 1944.0025 #_last_yr_nobias_adj_in_MPD; begin of ramp
+ 1966.5537 #_first_yr_fullbias_adj_in_MPD; begin of plateau
+ 2024.7644 #_last_yr_fullbias_adj_in_MPD
+ 2025.8595 #_end_yr_for_ramp_in_MPD (can be in forecast to shape ramp, but SS3 sets bias_adj to 0.0 for fcast yrs)
+ 0.2785 #_max_bias_adj_in_MPD (typical ~0.8; -3 sets all years to 0.0; -2 sets all non-forecast yrs w/ estimated recdevs to 1.0; -1 sets biasadj=1.0 for all yrs w/ recdevs)
  0 #_period of cycles in recruitment (N parms read below)
  -5 #min rec_dev
  5 #max rec_dev

@@ -4,5 +4,5 @@ Estimated alternative inputs to SS control file associated with blue line in fig
 <pre>1942.5   #_last_early_yr_nobias_adj_in_MPD 
 1967.3   #_first_yr_fullbias_adj_in_MPD 
 2018.0   #_last_yr_fullbias_adj_in_MPD 
-2032.6   #_first_recent_yr_nobias_adj_in_MPD 
-0.3404  #_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models) </pre>
+2041.4   #_first_recent_yr_nobias_adj_in_MPD 
+0.3401  #_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models) </pre>

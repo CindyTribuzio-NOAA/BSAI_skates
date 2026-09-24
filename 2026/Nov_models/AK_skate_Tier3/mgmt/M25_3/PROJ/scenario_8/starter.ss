@@ -5,8 +5,8 @@
 #_User_info_available_at:_https://nmfs-ost.github.io/ss3-website/
 #_Source_code_at:_https://github.com/nmfs-ost/ss3-source-code
 
-#C starter for model 14.2d ss_trans bridge and adding bias correction August 2025
-data_aksk14_2_2025.ss
+#C starter for model 25_3
+data_aksk25_3_2026.ss
 control.ss
 1 # 0=use init values in control file; 1=use ss.par
 1 # run display detail (0 = minimal; 1=one line per iter; 2=each logL)
@@ -40,5 +40,5 @@ control.ss
 0 # F_std_scaling: 0=no scaling; 1=F/Fspr; 2=F/Fmsy; 3=F/Fbtgt; where F means annual F_std, Fmsy means F_std@msy; values >=11 invoke N multiyr using 10s and 100s digit; append .1 to invoke log(ratio)
 0 # MCMC output detail: integer part (0=default; 1=adds obj func components; 2= +write_report_for_each_mceval); and decimal part (added to SR_LN(R0) on first call to mcmc)
 0 # ALK tolerance ***disabled in code
--1 # random number seed for bootstrap data (-1 to use long(time) as seed): # 1782761206
+-1 # random number seed for bootstrap data (-1 to use long(time) as seed): # 1785900696
 3.30 # check value for end of file and for version control

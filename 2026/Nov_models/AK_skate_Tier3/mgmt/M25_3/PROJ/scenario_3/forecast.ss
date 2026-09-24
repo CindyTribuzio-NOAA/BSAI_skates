@@ -1,5 +1,5 @@
 #C file created using an r4ss function
-#C file write time: 2026-06-29  13:25:04
+#C file write time: 2026-09-24  11:05:31
 #
 1 #_benchmarks
 1 #_MSY
@@ -12,7 +12,7 @@
 15 #_Nforecastyrs
 0 #_F_scalar
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)
-0 0 2020 2024 -999 0
+0 0 2021 2025 -999 0
 0 #_Fcast_selex
 2 #_ControlRuleMethod
 0.001 #_BforconstantF

@@ -1,13 +1,13 @@
 # Script to run the AK skate projection scenarios
-# 2025 by C Tribuzio
+# 2026 by C Tribuzio
 # something in this is creating issues, not running the projections properly.
 #need help with sleuthing it out
 
-# Step 1: create PROJ folder
+# Step 1: create PROJ folder in each models main folder
 # Step 2: copy over final converged model files
 # Step 3: In the starter.ss file you should change it to read from the converged .par file 
 #          1 # 0=use init values in control file; 1=use ss.par
-# Step 4: Make sure forecast file is correct
+# Step 4: Make sure forecast file is correct, change forcast.ss_new to forcast.ss
 
 # Setup ----
 # load required packages and code
@@ -23,7 +23,7 @@ if(length(libs[which(libs %in% rownames(installed.packages()) == FALSE )]) > 0) 
 lapply(libs, library, character.only = TRUE)
 
 # Current assessment year
-AYR <- 2025
+AYR <- 2026
 
 exe_loc <- here::here(AYR, "Nov_models", "AK_skate_Tier3", 'ss.exe')
 
@@ -34,8 +34,6 @@ exe_loc <- here::here(AYR, "Nov_models", "AK_skate_Tier3", 'ss.exe')
 source(here::here(AYR, "Nov_models", "AK_skate_Tier3","R", 'AK_Scenarios_For_SS', "Running_scenarios_Update.r"))
 
 # Run management scenarios----
-# Model 14_2d is so old, it can't use consistent proj methods, only archaic method from previous author
-
 # updated model that doesn't converge
 M14_2d1_projrun <- Do_AK_TIER_3_Scenarios(DIR = here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M14_2d1', 'PROJ'), 
                                          CYR = AYR, 
@@ -89,8 +87,8 @@ write_csv(scen_biom, here::here(getwd(), output_dir, 'proj_ssb.csv'))
 
 
 
-# Model 25_2
-M25_2_projrun <- Do_AK_TIER_3_Scenarios(DIR = here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M25_2', 'PROJ'), 
+# Model 25_3
+M25_3_projrun <- Do_AK_TIER_3_Scenarios(DIR = here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'M25_3', 'PROJ'), 
                                           CYR = AYR, 
                                           SYR = 1977,  
                                           SEXES = 1, 
@@ -101,7 +99,7 @@ M25_2_projrun <- Do_AK_TIER_3_Scenarios(DIR = here::here(AYR, 'Nov_models', 'AK_
                                           do_fig = TRUE, 
                                           do_mark=FALSE, 
                                           URL='https://www.npfmc.org/wp-content/PDFdocuments/SAFE/2024/BSAIskate.pdf')
-M25_2_projrun$FIGS
+M25_3_projrun$FIGS
 
 # save the plots separately
 output_dir <- "proj_plots"
@@ -109,17 +107,17 @@ if (!dir.exists(output_dir)) {
   dir.create(output_dir)
 }
 
-plot_name <- names(M25_2_projrun$FIGS[[1]])
+plot_name <- names(M25_3_projrun$FIGS[[1]])
 # Iterate through the list and save each plot
-for (i in seq_along(M25_2_projrun$FIGS[[1]])) {
+for (i in seq_along(M25_3_projrun$FIGS[[1]])) {
   file_path <- file.path(output_dir, paste0("spbiom", plot_name[i], ".png"))
-  ggsave(filename = file_path, plot = M25_2_projrun$FIGS[[1]][[i]], 
+  ggsave(filename = file_path, plot = M25_3_projrun$FIGS[[1]][[i]], 
          width = 8, height = 6, units = "in", dpi = 300)
 }
 
-for (i in seq_along(M25_2_projrun$FIGS[[2]])) {
+for (i in seq_along(M25_3_projrun$FIGS[[2]])) {
   file_path <- file.path(output_dir, paste0("catch", plot_name[i], ".png"))
-  ggsave(filename = file_path, plot = M25_2_projrun$FIGS[[2]][[i]], 
+  ggsave(filename = file_path, plot = M25_3_projrun$FIGS[[2]][[i]], 
          width = 8, height = 6, units = "in", dpi = 300)
 }
 
@@ -129,9 +127,9 @@ if (!dir.exists(output_dir)) {
   dir.create(output_dir)
 }
 #output tables
-two_yr <- M25_2_projrun$Two_year
+two_yr <- M25_3_projrun$Two_year
 write_csv(two_yr, here::here(getwd(), output_dir, 'proj_2yr.csv'))
-scen_catch <- M25_2_projrun$CATCH
+scen_catch <- M25_3_projrun$CATCH
 write_csv(scen_catch, here::here(getwd(), output_dir, 'proj_catch.csv'))
-scen_biom <- M25_2_projrun$SSB
+scen_biom <- M25_3_projrun$SSB
 write_csv(scen_biom, here::here(getwd(), output_dir, 'proj_ssb.csv'))

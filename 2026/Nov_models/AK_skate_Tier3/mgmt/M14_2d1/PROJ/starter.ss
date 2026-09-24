@@ -5,8 +5,8 @@
 #_User_info_available_at:_https://nmfs-ost.github.io/ss3-website/
 #_Source_code_at:_https://github.com/nmfs-ost/ss3-source-code
 
-#C starter for model 14.2d ss_trans bridge and adding bias correction August 2025
-data_aksk14_2_2025.ss
+#C starter for model 14.2d1 adding bias correction and jitters
+data_aksk25_3_2026.ss
 control.ss
 1 # 0=use init values in control file; 1=use ss.par
 1 # run display detail (0 = minimal; 1=one line per iter; 2=each logL)

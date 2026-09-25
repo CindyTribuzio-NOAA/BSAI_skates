@@ -40,6 +40,13 @@ EBSshelf_AKldat <- sqlQuery(channel_akfin, query = ("
                 and survey_definition_id = 98"))
 write_csv(EBSshelf_AKldat, here::here(dat_path, paste0('AKskate_GAPlengths_', AYR, '.csv')))
 
+# AK/leopard Survey LW data----
+GAP_lwdat <- sqlQuery(channel_akfin, query = ("
+                SELECT * from gap_products.akfin_specimen_v
+                WHERE species_code in (471, 477)
+                and survey_definition_id in (98, 52)"))
+write_csv(GAP_lwdat, here::here(dat_path, paste0('AKLEOskate_GAPLW_', AYR, '.csv')))
+
 # AK skate fishery length comp data ----
 fishery_AKlcomp2 <- sqlQuery(
   channel_akfin, 

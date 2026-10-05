@@ -8,10 +8,10 @@ if(length(libs[which(libs %in% rownames(installed.packages()) == FALSE )]) > 0) 
 lapply(libs, library, character.only = TRUE)
 '%nin%'<-Negate('%in%') #this is a handy function
 
+AYR <- 2026
+
 dat_path <- here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'data')
 dir.create(dat_path)
-
-AYR <- 2026
 
 dbname <- "akfin"
 db <- read_csv('database.csv')

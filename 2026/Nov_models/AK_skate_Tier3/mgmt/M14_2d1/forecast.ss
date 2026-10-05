@@ -6,13 +6,13 @@
 0.4 #_SPRtarget
 0.4 #_Btarget
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
-1977 0 1977 0 1977 0 1977 0 1977 0
+1977 2026 1977 2026 1977 2026 1977 2026 1977 2026
 1 #_Bmark_relF_Basis
 1 #_Forecast
 15 #_Nforecastyrs
 0 #_F_scalar
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)
-0 0 0 0 -999 0
+2024 2026 2024 2026 -999 0
 0 #_Fcast_selex
 2 #_ControlRuleMethod
 0.4 #_BforconstantF

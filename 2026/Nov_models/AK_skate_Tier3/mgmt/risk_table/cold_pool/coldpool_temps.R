@@ -87,3 +87,33 @@ cordat <- AKbio_dat |>
 cor_result <- cor.test(cordat$biomass, cordat$area_lte0_km2, method = "pearson")
 cor_result$p.value    # Sig neg correlation
 cor_result$estimate
+
+
+# all biomass plots----
+# AI survey dat
+AI_dat <- read_csv(here::here(AYR, 'Nov_models', "Oskate_Tier5", 'data', paste0('Oskate_GAPbiomass_', AYR, '.csv'))) |> 
+  filter(species_code == 471, 
+         survey == 52,
+         year >= 2010) |> 
+  clean_names() |> 
+  select(year, biomass) |> 
+  rename(AIbiomass = biomass)
+
+cp3dat <- AKbio_dat |> 
+  select(year, biomass) |> 
+  left_join(cindex) |> 
+  select(year, biomass, area_lte2_km2) |> 
+  rename(EBSbiomass = biomass) |> 
+  left_join(AI_dat) |> 
+  pivot_longer(!year)
+
+ggplot(cp3dat, aes(x = year, y = value, color = name))+
+  geom_point(size = 5) +
+  geom_line(linewidth = 1.5)+
+  scale_color_viridis(discrete = T) +
+  labs(x = "Year", y = "Value", color = '')+
+  facet_grid(name~., scales = 'free')+
+  theme_bw()+
+  theme(panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(color = 'black', linewidth = 0.5)) 

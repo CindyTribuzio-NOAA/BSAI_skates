@@ -1,18 +1,18 @@
 #C file created using an r4ss function
-#C file write time: 2026-09-24  10:59:39
+#C file write time: 2026-10-05  20:26:44
 #
 1 #_benchmarks
 1 #_MSY
 0.35 #_SPRtarget
 0.35 #_Btarget
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
-1977 0 1977 0 1977 0 1977 0 1977 0
+1977 2026 1977 2026 1977 2026 1977 2026 1977 2026
 1 #_Bmark_relF_Basis
 1 #_Forecast
 15 #_Nforecastyrs
 0 #_F_scalar
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)
-0 0 0 0 -999 0
+2024 2026 2024 2026 -999 0
 0 #_Fcast_selex
 2 #_ControlRuleMethod
 0.4 #_BforconstantF
@@ -39,12 +39,12 @@
 -9999 -1
 2 #_InputBasis
  #_#Year Seas Fleet  dead(B)                 comment
-    2026    1     1 23011.10  #sum_for_2026: 25406.2
-    2026    1     2  2395.10                        
-    2027    1     1 22002.50 #sum_for_2027: 24305.31
-    2027    1     2  2302.81                        
-    2028    1     1 21221.60  #sum_for_2028: 23451.9
-    2028    1     2  2230.30                        
+    2026    1     1 22326.00 #sum_for_2026: 25479.46
+    2026    1     2  3153.46                        
+    2027    1     1 21342.30 #sum_for_2027: 24373.31
+    2027    1     2  3031.01                        
+    2028    1     1 20577.90 #sum_for_2028: 23512.35
+    2028    1     2  2934.45                        
 -9999 0 0 0
 #
 999 # verify end of input 

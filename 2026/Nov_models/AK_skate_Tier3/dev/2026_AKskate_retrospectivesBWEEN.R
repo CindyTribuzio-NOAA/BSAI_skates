@@ -124,7 +124,7 @@ recM_ssb_df <- recM_out$derived_quants[grep("SSB_", recM_out$derived_quants$Labe
   select(!Label) |> 
   rename(SSB = Value)
 
-combined_biomass <- combined_biomass |> 
+combined_biomass <- prev_ssb |> 
   bind_rows(recM_ssb_df)
 write_csv(combined_biomass, here::here(AYR, 'Nov_models', 'AK_skate_Tier3', 'mgmt', 'retro_between', paste0(AYR, '_SSB_historic.csv')))
 

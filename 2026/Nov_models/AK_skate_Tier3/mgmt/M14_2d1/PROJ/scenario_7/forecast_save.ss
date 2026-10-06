@@ -8,7 +8,7 @@
 0.4 # SPR target (e.g. 0.40)
 0.4 # Biomass target (e.g. 0.40)
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF, beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
- 1977 2026 1977 2026 1977 2026 1977 2026 1977 2026
+ 1977 0 1977 0 1977 0 1977 0 1977 0
 #  1977 2026 1977 2026 1977 2026 1977 2026 1977 2026
 # value <0 convert to endyr-value; except -999 converts to start_yr; must be >=start_yr and <=endyr
 1 #Bmark_relF_Basis: 1 = use year range; 2 = set relF same as forecast below
@@ -18,8 +18,8 @@
 15 # N forecast years 
 0 # Fmult (only used for Do_Forecast==5) such that apical_F(f)=Fmult*relF(f)
 #_Fcast_years for averaging:  beg_selex, end_selex, beg_relF, end_relF, beg_mean recruits, end_recruits  (enter actual year, or values of 0 or -integer to be rel. endyr)
- 2024 2026 2024 2026 -999 0
-#  2024 2026 2024 2026 1950 2026
+ 0 0 0 0 -999 0
+#  2026 2026 2026 2026 1950 2026
 0 # Forecast selectivity (0=fcast selex is mean from year range; 1=fcast selectivity from time-vary parms). NOTE: logic reverses in new format
 # A revised protocol for the Fcast_yr specification is available and recommended. Template is below.
 #
@@ -33,8 +33,8 @@
 # st_yr and end_yr input can be actual year; <=0 sets rel. to timeseries endyr; Except -999 for st_yr sets to first year if time series
 # Method = 0 (or omitted) continue using time_vary parms; 1  use mean of derived factor over specified year range
 # Factor method st_yr end_yr 
-# 10 1 2024 2026 # selectivity; use:  10 1 2024 2026
-# 11 1 2024 2026 # rel_F; use:  11 1 2024 2026
+# 10 1 0 0 # selectivity; use:  10 1 0 0
+# 11 1 0 0 # rel_F; use:  11 1 0 0
 # 12 1 -999 0 # recruitment; use:  12 1 -999 0
 #-9999 0 0 0
 #
@@ -61,8 +61,8 @@
 2 # basis for fcast catch tuning and for fcast catch caps and allocation  (2=deadbio; 3=retainbio; 5=deadnum; 6=retainnum); NOTE: same units for all fleets
 # Conditional input if relative F choice = 2
 # enter list of:  season, fleet, relF; if used, terminate with season=-9999
-# 1 1 0.892477
-# 1 2 0.107523
+# 1 1 0.852506
+# 1 2 0.147494
 # -9999 0 0  # terminator for list of relF
 # enter list of: fleet number, max annual catch for fleets with a max; terminate with fleet=-9999
 -9999 -1

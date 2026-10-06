@@ -6,7 +6,7 @@
 #_Source_code_at:_https://github.com/nmfs-ost/ss3-source-code
 
 #C starter for model 25_3
-data_aksk25_3_2026.ss
+data_2026.ss
 control.ss
 1 # 0=use init values in control file; 1=use ss.par
 1 # run display detail (0 = minimal; 1=one line per iter; 2=each logL)
